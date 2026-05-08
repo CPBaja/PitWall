@@ -9,7 +9,7 @@ import { TableColumn } from '../static-day/static-day';
   standalone: true,
   imports: [],
   templateUrl: './pinned-leaderboard.html',
-  host: { class: 'flex flex-col h-full min-h-0' },
+  host: { class: 'flex flex-1 min-h-0 flex-col overflow-hidden' },
 })
 export class PinnedLeaderboardComponent {
   scores = input<TeamScore[]>([]);

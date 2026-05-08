@@ -6,9 +6,9 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, HeaderComponent],
-  template: `<div class="flex flex-col h-screen bg-zinc-950 text-white overflow-hidden font-mono">
+  template: `<div class="flex flex-col h-dvh bg-zinc-950 text-white overflow-hidden font-mono">
     <pw-header [lastUpdated]="data.lastUpdated()" [connected]="data.connected()" />
-    <router-outlet />
+    <router-outlet class="contents" />
   </div>`,
   styleUrl: './app.css',
 })
