@@ -28,7 +28,7 @@ export class PinnedLeaderboardComponent {
     const cols = this.columns()
       .map(() => '1fr')
       .join(' ');
-    return `grid-template-columns: 2rem 3rem 1fr ${cols}`;
+    return `grid-template-columns: 2rem 3rem 2fr ${cols}`;
   }
 
   setSort(key: string) {

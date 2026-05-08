@@ -22,6 +22,26 @@
     </button>
   </div>
 
+  <!-- Tech status -->
+  <div class="flex items-center justify-between px-4 py-2 border-b border-zinc-800 shrink-0">
+    <span class="text-xs tracking-widest uppercase text-zinc-600">Tech</span>
+    @let tech = techStatus();
+    @if (tech) {
+      <span
+        class="text-xs px-2 py-0.5 rounded uppercase"
+        [class]="
+          passedTech()
+            ? 'bg-emerald-400/10 text-emerald-400'
+            : 'bg-red-400/10 text-red-400'
+        "
+      >
+        {{ passedTech() ? 'Passed' : tech }}
+      </span>
+    } @else {
+      <span class="text-xs text-zinc-600">—</span>
+    }
+  </div>
+
   <!-- Score chips -->
   <div class="grid grid-cols-4 gap-px bg-zinc-800 border-b border-zinc-800 shrink-0">
     @for (s of scoreSummary(); track s.label) {
