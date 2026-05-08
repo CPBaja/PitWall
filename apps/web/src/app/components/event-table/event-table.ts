@@ -14,8 +14,6 @@ export class EventTableComponent {
   selectedCar = input<number | null>(null);
   carClick = output<number>();
 
-  readonly TOP_N = 10;
-
   gridStyle() {
     const cols = this.columns()
       .map((c) => (c.isText ? '2fr' : '1fr'))
@@ -27,12 +25,6 @@ export class EventTableComponent {
     return this.rows();
   }
 
-  get pinnedRow(): TableRow | null {
-    if (this.myCarNumber == null) return null;
-    const idx = this.rows().findIndex((r) => (r.score?.carNumber ?? -1) === this.myCarNumber());
-    return idx >= this.TOP_N ? this.rows()[idx] : null;
-  }
-
   isMyCar(n: number) {
     return n === this.myCarNumber();
   }
@@ -41,11 +33,12 @@ export class EventTableComponent {
   }
 
   rowClass(carNumber: number): string {
+    if (carNumber === this.myCarNumber()) {
+      const selected = carNumber === this.selectedCar() ? ' border-l-2 border-l-accent' : '';
+      return `sticky top-0 bottom-0 z-10 bg-accent-solid hover:bg-accent-solid-hover border-y border-accent-line${selected}`;
+    }
     if (carNumber === this.selectedCar()) {
       return 'bg-row-selected border-l-2 border-l-accent';
-    }
-    if (carNumber === this.myCarNumber()) {
-      return 'bg-accent-soft hover:bg-accent-soft-hover';
     }
     return 'hover:bg-row-hover';
   }

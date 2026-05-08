@@ -37,24 +37,4 @@
     }
   </div>
 
-  @let pinned = pinnedRow;
-  @if (pinned) {
-    <div
-      (click)="carClick.emit(pinned.score?.carNumber ?? 0)"
-      class="grid cursor-pointer items-center border-t-2 border-accent-line bg-accent-soft px-3 py-1 text-xs shrink-0"
-      [style]="gridStyle()"
-    >
-      <span class="font-medium text-accent-strong">{{
-        pinned.score?.carNumber
-      }}</span>
-      <span class="truncate text-accent-strong/80">{{
-        pinned.car?.teamName ?? '—'
-      }}</span>
-      @for (col of columns(); track col.key) {
-        <span class="text-right tabular-nums text-accent-strong/90">
-          {{ fmtCell(col.getValue(pinned), col) }}
-        </span>
-      }
-    </div>
-  }
 </div>

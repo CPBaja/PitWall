@@ -12,11 +12,11 @@
           </span>
         }
       </div>
-      <div class="max-w-64 truncate text-xs text-muted">{{ car()?.teamName ?? '—' }}</div>
+      <div class="max-w-64 text-xs text-muted">{{ car()?.teamName ?? '—' }}</div>
     </div>
     <button
       (click)="close.emit()"
-      class="mt-1 text-xs text-faint transition-colors hover:text-fg"
+      class="mt-1 text-xs text-fg-soft transition-colors hover:text-fg"
     >
       ✕
     </button>
@@ -29,11 +29,7 @@
     @if (tech) {
       <span
         class="rounded px-2 py-0.5 text-xs uppercase"
-        [class]="
-          passedTech()
-            ? 'bg-success/10 text-success'
-            : 'bg-danger/10 text-danger'
-        "
+        [class]="passedTech() ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'"
       >
         {{ passedTech() ? 'Passed' : tech }}
       </span>
@@ -47,10 +43,7 @@
     @for (s of scoreSummary(); track s.label) {
       <div class="bg-panel px-2 py-2 text-center">
         <div class="mb-1 text-xs text-subtle">{{ s.label }}</div>
-        <div
-          class="text-sm"
-          [class]="s.overridden ? 'text-accent' : 'text-fg'"
-        >
+        <div class="text-sm" [class]="s.overridden ? 'text-accent' : 'text-fg'">
           {{ s.value ?? '—' }}
         </div>
       </div>

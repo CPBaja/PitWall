@@ -23,6 +23,8 @@
   --pw-accent-strong: var(--color-amber-700);
   --pw-accent-soft: color-mix(in oklab, var(--color-amber-100) 50%, transparent);
   --pw-accent-soft-hover: var(--color-amber-100);
+  --pw-accent-solid: color-mix(in oklab, var(--color-amber-100) 50%, var(--pw-canvas));
+  --pw-accent-solid-hover: var(--color-amber-100);
   --pw-accent-line: color-mix(in oklab, var(--color-amber-500) 50%, transparent);
   --pw-success: var(--color-green-500);
   --pw-danger: var(--color-red-500);
@@ -49,6 +51,8 @@
   --pw-accent-strong: var(--color-amber-400);
   --pw-accent-soft: color-mix(in oklab, var(--color-amber-400) 5%, transparent);
   --pw-accent-soft-hover: color-mix(in oklab, var(--color-amber-400) 10%, transparent);
+  --pw-accent-solid: color-mix(in oklab, var(--color-amber-400) 8%, var(--pw-canvas));
+  --pw-accent-solid-hover: color-mix(in oklab, var(--color-amber-400) 14%, var(--pw-canvas));
   --pw-accent-line: color-mix(in oklab, var(--color-amber-400) 40%, transparent);
   --pw-danger-hover: var(--color-red-400);
 }
@@ -73,6 +77,8 @@
   --color-accent-strong: var(--pw-accent-strong);
   --color-accent-soft: var(--pw-accent-soft);
   --color-accent-soft-hover: var(--pw-accent-soft-hover);
+  --color-accent-solid: var(--pw-accent-solid);
+  --color-accent-solid-hover: var(--pw-accent-solid-hover);
   --color-accent-line: var(--pw-accent-line);
   --color-success: var(--pw-success);
   --color-danger: var(--pw-danger);

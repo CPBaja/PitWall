@@ -70,20 +70,13 @@ export class PinnedLeaderboardComponent {
       .map((r, i) => ({ ...r, rank: i + 1 }));
   });
 
-  readonly pinnedRow = computed(() => {
-    if (this.myCarNumber == null) return null;
-    const rows = this.sortedRows();
-    const idx = rows.findIndex((r) => r.carNumber === this.myCarNumber());
-    // Only show pin if scrolled out of visible area — approximate by index >= 15
-    return idx >= 15 ? rows[idx] : null;
-  });
-
   rowClass(carNumber: number): string {
+    if (carNumber === this.myCarNumber()) {
+      const selected = carNumber === this.selectedCar() ? ' border-l-2 border-l-accent' : '';
+      return `sticky top-0 bottom-0 z-10 bg-accent-solid hover:bg-accent-solid-hover border-y border-accent-line${selected}`;
+    }
     if (carNumber === this.selectedCar()) {
       return 'bg-row-selected border-l-2 border-l-accent';
-    }
-    if (carNumber === this.myCarNumber()) {
-      return 'bg-accent-soft hover:bg-accent-soft-hover';
     }
     return 'hover:bg-row-hover';
   }
