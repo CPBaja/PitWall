@@ -52,6 +52,7 @@ export class EventTableComponent {
   }
 
   fmtCell(val: number | string | null | undefined, col: TableColumn): string {
+    if (col.format) return col.format(val);
     if (val == null) return '—';
     if (typeof val === 'string') return val.length > 18 ? val.slice(0, 18) + '…' : val;
     return Number.isInteger(val) ? String(val) : val.toFixed(1);

@@ -18,6 +18,7 @@ export interface TableColumn {
   key: string;
   label: string;
   getValue: (row: TableRow) => number | string | null | undefined;
+  format?: (value: number | string | null | undefined) => string;
   highlight?: boolean;
   isText?: boolean;
 }

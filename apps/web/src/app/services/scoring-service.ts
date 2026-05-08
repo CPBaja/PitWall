@@ -11,7 +11,7 @@ export class ScoringService {
   private data = inject(DataService);
   private overrides = inject(OverrideService);
 
-  readonly scores = computed<TeamScore[]>(() => {
+  readonly teamResults = computed<TeamResults[]>(() => {
     const cars = this.data.cars();
     const overrideMap = this.overrides.overrides();
 
@@ -20,11 +20,21 @@ export class ScoringService {
     }
 
     const finishOrders = resolveFinishOrder(cars, overrideMap);
-    const teamResults = cars.map((car) =>
+    return cars.map((car) =>
       buildTeamResults(car, overrideMap.get(car.carNumber) ?? {}, finishOrders),
     );
-    const fieldStats = deriveFieldStats(teamResults);
-    return scoreAllTeams(teamResults, fieldStats);
+  });
+
+  readonly fieldStats = computed<FieldStats>(() => deriveFieldStats(this.teamResults()));
+
+  readonly scores = computed<TeamScore[]>(() => {
+    const teamResults = this.teamResults();
+
+    if (teamResults.length === 0) {
+      return [];
+    }
+
+    return scoreAllTeams(teamResults, this.fieldStats());
   });
 
   readonly scoreMap = computed(() => new Map(this.scores().map((s) => [Number(s.carNumber), s])));

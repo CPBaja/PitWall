@@ -81,7 +81,8 @@ export class PinnedLeaderboardComponent {
     return 'hover:bg-row-hover';
   }
 
-  fmt(val: number | string | null | undefined): string {
+  fmt(val: number | string | null | undefined, col?: TableColumn): string {
+    if (col?.format) return col.format(val);
     if (val == null) return '—';
     if (typeof val === 'string') return val;
     return Number.isInteger(val) ? String(val) : val.toFixed(1);

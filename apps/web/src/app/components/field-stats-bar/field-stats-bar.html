@@ -1,0 +1,11 @@
+<div class="grid grid-cols-4 border-b border-line bg-panel shrink-0">
+  @for (stat of stats(); track stat.key) {
+    <div class="min-w-0 border-r border-line-subtle px-3 py-2 last:border-r-0">
+      <div class="mb-1 flex items-center justify-between gap-2">
+        <span class="text-xs tracking-widest text-muted uppercase">{{ stat.label }}</span>
+        <span class="text-xs tabular-nums text-accent">tMin {{ fmtTime(stat.tMin) }}</span>
+      </div>
+      <div class="truncate text-xs text-fg-soft">{{ bestLabel(stat) }}</div>
+    </div>
+  }
+</div>

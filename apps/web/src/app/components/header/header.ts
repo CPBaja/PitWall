@@ -33,8 +33,10 @@ export class HeaderComponent {
       const car = this.myCarNumber();
       const url = this.router.url;
 
-      if (car != null && url.startsWith('/static')) {
-        this.router.navigate(['/static', car]);
+      const activeTab = url.match(/^\/(static|dynamic|endurance)(?:\/|$)/)?.[1];
+
+      if (car != null && activeTab) {
+        this.router.navigate([`/${activeTab}`, car]);
       }
     });
   }

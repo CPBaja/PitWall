@@ -45,7 +45,7 @@
             class="text-right tabular-nums"
             [class]="col.highlight ? 'text-fg' : 'text-subtle'"
           >
-            {{ fmt(col.getValue({ score: row.score, car: row.car })) }}
+            {{ fmt(col.getValue({ score: row.score, car: row.car }), col) }}
           </span>
         }
       </div>

@@ -1,0 +1,86 @@
+<div class="flex flex-1 min-h-0 overflow-hidden bg-canvas text-fg font-mono">
+  <!-- Left: overall leaderboard -->
+  <div class="flex min-h-0 flex-col overflow-hidden border-r border-line" [style]="leftWidth()">
+    <div class="flex items-center justify-between border-b border-line px-3 py-1.5 shrink-0">
+      <span class="text-xs tracking-widest text-muted uppercase">Overall Dynamic</span>
+      <span class="text-xs text-subtle">{{ scores().length }} cars</span>
+    </div>
+    <pw-pinned-leaderboard
+      [scores]="scores()"
+      [carMap]="carMap()"
+      [myCarNumber]="myCarNumber()"
+      [selectedCar]="selectedCar()"
+      [columns]="dynamicColumns"
+      (carClick)="onCarClick($event)"
+    />
+  </div>
+
+  <!-- Right: event tables -->
+  <div
+    class="flex flex-1 min-w-0 min-h-0 flex-col overflow-hidden border-r border-line"
+    [class]="selectedCar() ? 'hidden xl:flex' : 'flex'"
+  >
+    <pw-field-stats-bar [stats]="statItems()" />
+
+    <!-- Acceleration -->
+    <div class="flex flex-1 min-h-0 flex-col overflow-hidden border-b border-line">
+      <div class="flex items-center justify-between border-b border-line px-3 py-1.5 shrink-0">
+        <span class="text-xs tracking-widest text-muted uppercase">Acceleration</span>
+      </div>
+      <pw-event-table
+        [rows]="accelerationRows()"
+        [columns]="accelerationColumns"
+        [myCarNumber]="myCarNumber()"
+        [selectedCar]="selectedCar()"
+        (carClick)="onCarClick($event)"
+      />
+    </div>
+
+    <!-- Maneuverability -->
+    <div class="flex flex-1 min-h-0 flex-col overflow-hidden border-b border-line">
+      <div class="flex items-center justify-between border-b border-line px-3 py-1.5 shrink-0">
+        <span class="text-xs tracking-widest text-muted uppercase">Maneuverability</span>
+      </div>
+      <pw-event-table
+        [rows]="maneuverabilityRows()"
+        [columns]="maneuverabilityColumns"
+        [myCarNumber]="myCarNumber()"
+        [selectedCar]="selectedCar()"
+        (carClick)="onCarClick($event)"
+      />
+    </div>
+
+    <!-- Traction -->
+    <div class="flex flex-1 min-h-0 flex-col overflow-hidden border-b border-line">
+      <div class="flex items-center justify-between border-b border-line px-3 py-1.5 shrink-0">
+        <span class="text-xs tracking-widest text-muted uppercase">Traction</span>
+      </div>
+      <pw-event-table
+        [rows]="tractionRows()"
+        [columns]="tractionColumns"
+        [myCarNumber]="myCarNumber()"
+        [selectedCar]="selectedCar()"
+        (carClick)="onCarClick($event)"
+      />
+    </div>
+
+    <!-- Specialty -->
+    <div class="flex flex-1 min-h-0 flex-col overflow-hidden">
+      <div class="flex items-center justify-between border-b border-line px-3 py-1.5 shrink-0">
+        <span class="text-xs tracking-widest text-muted uppercase">Specialty</span>
+      </div>
+      <pw-event-table
+        [rows]="specialtyRows()"
+        [columns]="specialtyColumns"
+        [myCarNumber]="myCarNumber()"
+        [selectedCar]="selectedCar()"
+        (carClick)="onCarClick($event)"
+      />
+    </div>
+  </div>
+
+  <!-- Car panel -->
+  @if (selectedCar()) {
+    <pw-car-panel [carNumber]="selectedCar()!" (close)="selectedCar.set(null)" />
+  }
+</div>
