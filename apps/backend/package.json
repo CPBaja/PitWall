@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc && node built/server.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.13",
+    "@types/express": "^5.0.6"
+  }
+}

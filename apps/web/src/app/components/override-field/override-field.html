@@ -1,0 +1,28 @@
+<div class="flex items-center gap-2 mb-2">
+  <span class="w-16 text-xs text-zinc-500 shrink-0">
+    {{ label() }} <span class="text-zinc-700">{{ hint() }}</span>
+  </span>
+
+  <input
+    type="number"
+    class="flex-1 bg-zinc-800 border rounded px-2 py-1 text-xs text-right focus:outline-none transition-colors"
+    [class]="
+      overrideValue() != null
+        ? 'border-amber-400/40 text-amber-400 focus:border-amber-400'
+        : 'border-zinc-700 text-zinc-200 focus:border-zinc-500'
+    "
+    [placeholder]="liveValue() != null ? liveValue()!.toString() : '—'"
+    [(ngModel)]="overrideValue"
+  />
+
+  @if (overrideValue() != null) {
+    <button
+      (click)="reset.emit()"
+      class="text-xs text-zinc-600 hover:text-amber-400 transition-colors shrink-0 w-10 text-right"
+    >
+      {{ liveValue() ?? '—' }} ↺
+    </button>
+  } @else {
+    <span class="text-xs text-zinc-700 shrink-0 w-10 text-right">live</span>
+  }
+</div>

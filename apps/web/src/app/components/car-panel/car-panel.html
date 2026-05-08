@@ -1,0 +1,118 @@
+<div
+  class="w-80 shrink-0 border-l border-zinc-800 bg-zinc-900 flex flex-col overflow-hidden font-mono"
+>
+  <!-- Header -->
+  <div class="flex items-start justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
+    <div>
+      <div class="flex items-center gap-2 mb-0.5">
+        <span class="text-xl font-medium text-white">#{{ carNumber() }}</span>
+        @if (hasOverrides()) {
+          <span class="text-xs px-1.5 py-0.5 bg-amber-400/10 text-amber-400 rounded">
+            PREDICTED
+          </span>
+        }
+      </div>
+      <div class="text-xs text-zinc-500 truncate max-w-64">{{ car()?.teamName ?? '—' }}</div>
+    </div>
+    <button
+      (click)="close.emit()"
+      class="text-zinc-600 hover:text-zinc-300 transition-colors text-xs mt-1"
+    >
+      ✕
+    </button>
+  </div>
+
+  <!-- Score chips -->
+  <div class="grid grid-cols-4 gap-px bg-zinc-800 border-b border-zinc-800 shrink-0">
+    @for (s of scoreSummary(); track s.label) {
+      <div class="bg-zinc-900 px-2 py-2 text-center">
+        <div class="text-xs text-zinc-600 mb-1">{{ s.label }}</div>
+        <div class="text-sm" [class]="s.overridden ? 'text-amber-400' : 'text-zinc-100'">
+          {{ s.value ?? '—' }}
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Override inputs -->
+  <div class="flex-1 overflow-y-auto px-4 py-3 space-y-4">
+    <div>
+      <div class="text-xs tracking-widest uppercase text-zinc-600 mb-2">Design</div>
+      <pw-override-field
+        label="Score"
+        hint="/ 150"
+        [liveValue]="car()?.staticData?.designScore"
+        [overrideValue]="override().designScore ?? null"
+        (overrideValueChange)="set('designScore', $event)"
+        (reset)="reset('designScore')"
+      />
+      <pw-override-field
+        label="Penalty"
+        hint="−"
+        [liveValue]="car()?.staticData?.designPenalty"
+        [overrideValue]="override().designPenalty ?? null"
+        (overrideValueChange)="set('designPenalty', $event)"
+        (reset)="reset('designPenalty')"
+      />
+    </div>
+
+    <div>
+      <div class="text-xs tracking-widest uppercase text-zinc-600 mb-2">Cost</div>
+      <pw-override-field
+        label="Proto"
+        hint="/ 85"
+        [liveValue]="car()?.staticData?.costPrototype"
+        [overrideValue]="override().costPrototype ?? null"
+        (overrideValueChange)="set('costPrototype', $event)"
+        (reset)="reset('costPrototype')"
+      />
+      <pw-override-field
+        label="Report"
+        hint="/ 15"
+        [liveValue]="car()?.staticData?.costReport"
+        [overrideValue]="override().costReport ?? null"
+        (overrideValueChange)="set('costReport', $event)"
+        (reset)="reset('costReport')"
+      />
+      <pw-override-field
+        label="Penalty"
+        hint="−"
+        [liveValue]="car()?.staticData?.costPenalty"
+        [overrideValue]="override().costPenalty ?? null"
+        (overrideValueChange)="set('costPenalty', $event)"
+        (reset)="reset('costPenalty')"
+      />
+    </div>
+
+    <div>
+      <div class="text-xs tracking-widest uppercase text-zinc-600 mb-2">Business Presentation</div>
+      <pw-override-field
+        label="Score"
+        hint="/ 70"
+        [liveValue]="car()?.staticData?.bpScore"
+        [overrideValue]="override().bpScore ?? null"
+        (overrideValueChange)="set('bpScore', $event)"
+        (reset)="reset('bpScore')"
+      />
+      <pw-override-field
+        label="Penalty"
+        hint="−"
+        [liveValue]="car()?.staticData?.bpPenalty"
+        [overrideValue]="override().bpPenalty ?? null"
+        (overrideValueChange)="set('bpPenalty', $event)"
+        (reset)="reset('bpPenalty')"
+      />
+    </div>
+  </div>
+
+  @if (hasOverrides()) {
+    <div class="px-4 py-2 border-t border-zinc-800 shrink-0">
+      <button
+        (click)="resetAll()"
+        class="w-full text-xs tracking-widest uppercase text-zinc-600 hover:text-red-400 transition-colors py-1"
+      >
+        Reset all overrides
+      </button>
+    </div>
+  }
+</div>

@@ -1,0 +1,69 @@
+<div class="flex flex-col h-full overflow-hidden">
+  <div
+    class="grid text-xs tracking-widest uppercase text-zinc-600 px-3 py-1.5 border-b border-zinc-800 shrink-0"
+    [style]="gridStyle()"
+  >
+    <span>#</span>
+    <span>Car</span>
+    <span>Team</span>
+    @for (col of columns(); track col.key) {
+      <span
+        class="text-right cursor-pointer hover:text-zinc-400 transition-colors"
+        (click)="setSort(col.key)"
+      >
+        {{ col.label }}{{ sortKey() === col.key ? (sortDir() === 'desc' ? ' ↓' : ' ↑') : '' }}
+      </span>
+    }
+  </div>
+
+  <div class="flex-1 overflow-y-auto">
+    @for (row of sortedRows(); track row.carNumber; let i = $index) {
+      <div
+        (click)="carClick.emit(row.carNumber)"
+        class="grid items-center px-3 py-1 border-b border-zinc-800/40 cursor-pointer transition-colors text-xs"
+        [style]="gridStyle()"
+        [class]="rowClass(row.carNumber)"
+      >
+        <span class="text-zinc-600">{{ i + 1 }}</span>
+        <span class="flex items-center gap-1">
+          <span
+            [class]="
+              row.carNumber === myCarNumber() ? 'text-amber-400 font-medium' : 'text-zinc-300'
+            "
+          >
+            {{ row.carNumber }}
+          </span>
+          @if (row.hasOverrides) {
+            <span class="w-1 h-1 rounded-full bg-amber-400 shrink-0"></span>
+          }
+        </span>
+        <span class="text-zinc-400 truncate">{{ row.teamName }}</span>
+        @for (col of columns(); track col.key) {
+          <span
+            class="text-right tabular-nums"
+            [class]="col.highlight ? 'text-zinc-100' : 'text-zinc-400'"
+          >
+            {{ fmt(col.getValue({ score: row.score, car: row.car })) }}
+          </span>
+        }
+      </div>
+    }
+  </div>
+
+  @if (pinnedRow(); as pinned) {
+    <div
+      (click)="carClick.emit(pinned.carNumber)"
+      class="grid items-center px-3 py-1 border-t-2 border-amber-400/30 bg-amber-400/5 cursor-pointer text-xs shrink-0"
+      [style]="gridStyle()"
+    >
+      <span class="text-amber-400/50">{{ pinned.rank }}</span>
+      <span class="text-amber-400 font-medium">{{ pinned.carNumber }}</span>
+      <span class="text-amber-400/70 truncate">{{ pinned.teamName }}</span>
+      @for (col of columns(); track col.key) {
+        <span class="text-right tabular-nums text-amber-400/80">
+          {{ fmt(col.getValue({ score: pinned.score, car: pinned.car })) }}
+        </span>
+      }
+    </div>
+  }
+</div>
