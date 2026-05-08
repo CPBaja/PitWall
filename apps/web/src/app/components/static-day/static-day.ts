@@ -44,7 +44,7 @@ export class StaticDayComponent {
   readonly selectedCar = signal<number | null>(null);
 
   leftWidth() {
-    return `width: ${this.selectedCar() ? '35%' : '40%'}`;
+    return `width: ${this.selectedCar() ? '35%' : '50%'}`;
   }
 
   onCarClick(carNumber: number) {
@@ -54,6 +54,7 @@ export class StaticDayComponent {
   // ── Column defs ──────────────────────────────────────────────────────────
 
   readonly staticColumns: TableColumn[] = [
+    { key: 'tech', label: 'Tech', getValue: (s) => s.car?.staticData?.passedTech, isText: true },
     { key: 'design', label: 'Design', getValue: (s) => s.score?.designScore },
     { key: 'cost', label: 'Cost', getValue: (s) => s.score?.costScore },
     { key: 'bp', label: 'BP', getValue: (s) => s.score?.bpScore },

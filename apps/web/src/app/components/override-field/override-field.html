@@ -5,7 +5,7 @@
 
   <input
     type="number"
-    class="flex-1 bg-zinc-800 border rounded px-2 py-1 text-xs text-right focus:outline-none transition-colors"
+    class="flex-1 bg-zinc-800 border rounded px-2 py-1 text-xs text-right focus:outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
     [class]="
       overrideValue() != null
         ? 'border-amber-400/40 text-amber-400 focus:border-amber-400'

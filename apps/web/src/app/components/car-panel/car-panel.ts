@@ -24,6 +24,11 @@ export class CarPanelComponent {
   readonly score = computed(() => this.scoring.getScore(this.carNumber()));
   readonly override = computed(() => this.overrides.getForCar(this.carNumber()));
   readonly hasOverrides = computed(() => this.overrides.overriddenCars().has(this.carNumber()));
+  readonly techStatus = computed(() => this.car()?.staticData?.passedTech?.trim() || null);
+  readonly passedTech = computed(() => {
+    const status = this.techStatus()?.toLowerCase();
+    return status != null && status !== 'not yet';
+  });
 
   readonly scoreSummary = computed(() => {
     const s = this.score();
