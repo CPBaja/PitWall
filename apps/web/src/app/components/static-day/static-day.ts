@@ -26,6 +26,7 @@ export interface TableColumn {
   selector: 'pw-static-day',
   standalone: true,
   imports: [FormsModule, PinnedLeaderboardComponent, EventTableComponent, CarPanelComponent],
+  host: { class: 'contents' },
   templateUrl: './static-day.html',
 })
 export class StaticDayComponent {

@@ -4,7 +4,7 @@ import { TableRow, TableColumn } from '../static-day/static-day';
 @Component({
   selector: 'pw-event-table',
   imports: [],
-  host: { class: 'flex flex-col min-h-0 max-h-[20rem]' },
+  host: { class: 'flex flex-1 flex-col min-h-0 overflow-hidden' },
   templateUrl: './event-table.html',
 })
 export class EventTableComponent {

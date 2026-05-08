@@ -1,82 +1,73 @@
-<div class="flex flex-col h-screen bg-zinc-950 text-white overflow-hidden font-mono">
-  <!-- Body -->
-  <div class="flex flex-1 min-h-0">
-    <!-- Left: overall leaderboard -->
-    <div class="flex flex-col border-r border-zinc-800 overflow-hidden" [style]="leftWidth()">
+<div class="flex flex-1 min-h-0 overflow-hidden bg-zinc-950 text-white font-mono">
+  <!-- Left: overall leaderboard -->
+  <div class="flex min-h-0 flex-col overflow-hidden border-r border-zinc-800" [style]="leftWidth()">
+    <div class="px-3 py-1.5 border-b border-zinc-800 shrink-0 flex items-center justify-between">
+      <span class="text-xs tracking-widest uppercase text-zinc-500">Overall Static</span>
+      <span class="text-xs text-zinc-600">{{ scores().length }} cars</span>
+    </div>
+    <pw-pinned-leaderboard
+      [scores]="scores()"
+      [carMap]="carMap()"
+      [myCarNumber]="myCarNumber()"
+      [selectedCar]="selectedCar()"
+      [columns]="staticColumns"
+      (carClick)="onCarClick($event)"
+    />
+  </div>
+
+  <!-- Right: event tables -->
+  <div
+    class="flex flex-col flex-1 min-w-0 min-h-0 overflow-hidden border-r border-zinc-800"
+    [class]="selectedCar() ? 'hidden xl:flex' : 'flex'"
+  >
+    <!-- Design -->
+    <div class="flex flex-1 min-h-0 flex-col overflow-hidden border-b border-zinc-800">
       <div class="px-3 py-1.5 border-b border-zinc-800 shrink-0 flex items-center justify-between">
-        <span class="text-xs tracking-widest uppercase text-zinc-500">Overall Static</span>
-        <span class="text-xs text-zinc-600">{{ scores().length }} cars</span>
+        <span class="text-xs tracking-widest uppercase text-zinc-500">Design</span>
+        <span class="text-xs text-zinc-600">all · of 150</span>
       </div>
-      <pw-pinned-leaderboard
-        [scores]="scores()"
-        [carMap]="carMap()"
+      <pw-event-table
+        [rows]="designRows()"
+        [columns]="designColumns"
         [myCarNumber]="myCarNumber()"
         [selectedCar]="selectedCar()"
-        [columns]="staticColumns"
         (carClick)="onCarClick($event)"
       />
     </div>
 
-    <!-- Right: event tables -->
-    <div
-      class="flex flex-col flex-1 min-w-0 overflow-hidden border-r border-zinc-800"
-      [class]="selectedCar() ? 'hidden xl:flex' : 'flex'"
-    >
-      <!-- Design -->
-      <div class="flex flex-col border-b border-zinc-800 min-h-0" style="flex: 1">
-        <div
-          class="px-3 py-1.5 border-b border-zinc-800 shrink-0 flex items-center justify-between"
-        >
-          <span class="text-xs tracking-widest uppercase text-zinc-500">Design</span>
-          <span class="text-xs text-zinc-600">all · of 150</span>
-        </div>
-        <pw-event-table
-          [rows]="designRows()"
-          [columns]="designColumns"
-          [myCarNumber]="myCarNumber()"
-          [selectedCar]="selectedCar()"
-          (carClick)="onCarClick($event)"
-        />
+    <!-- Cost -->
+    <div class="flex flex-1 min-h-0 flex-col overflow-hidden border-b border-zinc-800">
+      <div class="px-3 py-1.5 border-b border-zinc-800 shrink-0 flex items-center justify-between">
+        <span class="text-xs tracking-widest uppercase text-zinc-500">Cost</span>
+        <span class="text-xs text-zinc-600">top 10 · of 100</span>
       </div>
-
-      <!-- Cost -->
-      <div class="flex flex-col border-b border-zinc-800 overflow-hidden min-h-0" style="flex: 1">
-        <div
-          class="px-3 py-1.5 border-b border-zinc-800 shrink-0 flex items-center justify-between"
-        >
-          <span class="text-xs tracking-widest uppercase text-zinc-500">Cost</span>
-          <span class="text-xs text-zinc-600">top 10 · of 100</span>
-        </div>
-        <pw-event-table
-          [rows]="costRows()"
-          [columns]="costColumns"
-          [myCarNumber]="myCarNumber()"
-          [selectedCar]="selectedCar()"
-          (carClick)="onCarClick($event)"
-        />
-      </div>
-
-      <!-- BP -->
-      <div class="flex flex-col overflow-hidden min-h-0" style="flex: 1">
-        <div
-          class="px-3 py-1.5 border-b border-zinc-800 shrink-0 flex items-center justify-between"
-        >
-          <span class="text-xs tracking-widest uppercase text-zinc-500">Business Presentation</span>
-          <span class="text-xs text-zinc-600">all · of 70</span>
-        </div>
-        <pw-event-table
-          [rows]="bpRows()"
-          [columns]="bpColumns"
-          [myCarNumber]="myCarNumber()"
-          [selectedCar]="selectedCar()"
-          (carClick)="onCarClick($event)"
-        />
-      </div>
+      <pw-event-table
+        [rows]="costRows()"
+        [columns]="costColumns"
+        [myCarNumber]="myCarNumber()"
+        [selectedCar]="selectedCar()"
+        (carClick)="onCarClick($event)"
+      />
     </div>
 
-    <!-- Car panel -->
-    @if (selectedCar()) {
-      <pw-car-panel [carNumber]="selectedCar()!" (close)="selectedCar.set(null)" />
-    }
+    <!-- BP -->
+    <div class="flex flex-1 min-h-0 flex-col overflow-hidden">
+      <div class="px-3 py-1.5 border-b border-zinc-800 shrink-0 flex items-center justify-between">
+        <span class="text-xs tracking-widest uppercase text-zinc-500">Business Presentation</span>
+        <span class="text-xs text-zinc-600">all · of 70</span>
+      </div>
+      <pw-event-table
+        [rows]="bpRows()"
+        [columns]="bpColumns"
+        [myCarNumber]="myCarNumber()"
+        [selectedCar]="selectedCar()"
+        (carClick)="onCarClick($event)"
+      />
+    </div>
   </div>
+
+  <!-- Car panel -->
+  @if (selectedCar()) {
+    <pw-car-panel [carNumber]="selectedCar()!" (close)="selectedCar.set(null)" />
+  }
 </div>
