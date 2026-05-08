@@ -27,6 +27,7 @@ export interface TableColumn {
   standalone: true,
   imports: [FormsModule, PinnedLeaderboardComponent, EventTableComponent, CarPanelComponent],
   templateUrl: './static-day.html',
+  host: { class: 'flex flex-col flex-1 min-h-0' },
 })
 export class StaticDayComponent {
   carNum = input.required<string>();

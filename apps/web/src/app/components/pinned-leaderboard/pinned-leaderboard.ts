@@ -21,6 +21,8 @@ export class PinnedLeaderboardComponent {
 
   private overrides = inject(OverrideService);
 
+  readonly TOP_N = 10;
+
   sortKey = signal('total');
   sortDir = signal<'asc' | 'desc'>('desc');
 
@@ -70,13 +72,12 @@ export class PinnedLeaderboardComponent {
       .map((r, i) => ({ ...r, rank: i + 1 }));
   });
 
-  readonly pinnedRow = computed(() => {
-    if (this.myCarNumber == null) return null;
+  get pinnedRow() {
+    if (this.myCarNumber() == null) return null;
     const rows = this.sortedRows();
-    const idx = rows.findIndex((r) => r.carNumber === this.myCarNumber());
-    // Only show pin if scrolled out of visible area — approximate by index >= 15
-    return idx >= 15 ? rows[idx] : null;
-  });
+    const idx = rows.findIndex((r) => (r.score?.carNumber ?? -1) === this.myCarNumber());
+    return idx >= this.TOP_N ? rows[idx] : null;
+  }
 
   rowClass(carNumber: number): string {
     if (carNumber === this.selectedCar()) return 'bg-zinc-800/60 border-l-2 border-l-amber-400';

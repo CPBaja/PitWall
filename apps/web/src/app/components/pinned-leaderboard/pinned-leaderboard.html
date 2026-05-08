@@ -50,7 +50,8 @@
     }
   </div>
 
-  @if (pinnedRow(); as pinned) {
+  @let pinned = pinnedRow;
+  @if (pinned) {
     <div
       (click)="carClick.emit(pinned.carNumber)"
       class="grid items-center px-3 py-1 border-t-2 border-amber-400/30 bg-amber-400/5 cursor-pointer text-xs shrink-0"
