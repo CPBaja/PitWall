@@ -41,17 +41,21 @@ export class EventTableComponent {
   }
 
   rowClass(carNumber: number): string {
-    if (carNumber === this.selectedCar()) return 'bg-zinc-800/60 border-l-2 border-l-amber-400';
-    if (carNumber === this.myCarNumber()) return 'bg-amber-400/5 hover:bg-amber-400/10';
-    return 'hover:bg-zinc-800/30';
+    if (carNumber === this.selectedCar()) {
+      return 'bg-row-selected border-l-2 border-l-accent';
+    }
+    if (carNumber === this.myCarNumber()) {
+      return 'bg-accent-soft hover:bg-accent-soft-hover';
+    }
+    return 'hover:bg-row-hover';
   }
 
   cellClass(col: TableColumn, row: TableRow): string {
     const val = col.getValue(row);
-    if (val == null) return 'text-zinc-600';
-    if (col.highlight) return 'text-zinc-100';
-    if (col.isText) return 'text-zinc-500 truncate';
-    return 'text-zinc-400';
+    if (val == null) return 'text-faint';
+    if (col.highlight) return 'text-fg';
+    if (col.isText) return 'text-muted truncate';
+    return 'text-subtle';
   }
 
   fmtCell(val: number | string | null | undefined, col: TableColumn): string {

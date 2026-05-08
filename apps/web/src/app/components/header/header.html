@@ -1,14 +1,16 @@
-<div class="flex items-center justify-between px-4 py-2 border-b border-zinc-800 shrink-0">
+<div
+  class="flex items-center justify-between border-b border-line bg-canvas px-4 py-2 shrink-0"
+>
   <div class="flex items-center gap-3">
-    <span class="text-xs tracking-widest uppercase text-zinc-500">PitWall</span>
-    <span class="text-zinc-700">·</span>
+    <span class="text-xs tracking-widest text-muted uppercase">PitWall</span>
+    <span class="text-faint">·</span>
     <!-- Nav tabs -->
     <nav class="flex items-center gap-1">
       @for (tab of tabs; track tab.label) {
         <a
           [routerLink]="tab.routerLink"
-          routerLinkActive="text-amber-400 border-amber-400/40"
-          class="px-2 py-0.5 text-xs tracking-widest uppercase rounded border border-transparent text-zinc-500 hover:text-zinc-300 transition-colors"
+          routerLinkActive="text-accent border-accent-line"
+          class="rounded border border-transparent px-2 py-0.5 text-xs tracking-widest text-muted uppercase transition-colors hover:text-fg-soft"
           >{{ tab.label }}</a
         >
       }
@@ -16,26 +18,36 @@
   </div>
 
   <div class="flex items-center gap-4">
+    <button
+      type="button"
+      (click)="theme.toggle()"
+      class="rounded border border-input px-2 py-0.5 text-xs tracking-widest text-muted uppercase transition-colors hover:border-input-hover hover:text-fg"
+      [attr.aria-label]="theme.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+    >
+      {{ theme.theme() === 'dark' ? 'Light' : 'Dark' }}
+    </button>
     <div class="flex items-center gap-2">
-      <span class="text-xs text-zinc-600 tracking-widest uppercase">My Car</span>
+      <span class="text-xs tracking-widest text-subtle uppercase">My Car</span>
       <input
         type="number"
-        class="w-14 bg-zinc-800 border border-zinc-700 rounded px-2 py-0.5 text-xs text-center text-amber-400 focus:outline-none focus:border-amber-400/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        class="w-14 rounded border border-input bg-panel px-2 py-0.5 text-center text-xs text-accent focus:border-accent-line focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         placeholder="—"
         [ngModel]="myCarNumber()"
         (ngModelChange)="onCarChange($event)"
       />
     </div>
-    <span class="text-zinc-700">·</span>
-    <span class="text-xs text-zinc-500">
+    <span class="text-faint">·</span>
+    <span class="text-xs text-muted">
       {{ lastUpdated() ? 'Updated ' + (lastUpdated() | date: 'h:mm:ss a') : 'Waiting for data' }}
     </span>
     <div class="flex items-center gap-1.5">
       <div
         class="w-1.5 h-1.5 rounded-full"
-        [class]="connected() ? 'bg-green-500' : 'bg-red-500 animate-pulse'"
+        [class]="connected() ? 'bg-success' : 'bg-danger animate-pulse'"
       ></div>
-      <span class="text-xs text-zinc-500">{{ connected() ? 'Live' : 'Disconnected' }}</span>
+      <span class="text-xs text-muted">{{
+        connected() ? 'Live' : 'Disconnected'
+      }}</span>
     </div>
   </div>
 </div>

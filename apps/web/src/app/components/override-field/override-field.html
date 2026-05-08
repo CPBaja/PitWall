@@ -1,15 +1,15 @@
 <div class="flex items-center gap-2 mb-2">
-  <span class="w-16 text-xs text-zinc-500 shrink-0">
-    {{ label() }} <span class="text-zinc-700">{{ hint() }}</span>
+  <span class="w-16 text-xs text-muted shrink-0">
+    {{ label() }} <span class="text-faint">{{ hint() }}</span>
   </span>
 
   <input
     type="number"
-    class="flex-1 bg-zinc-800 border rounded px-2 py-1 text-xs text-right focus:outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+    class="flex-1 rounded border bg-panel px-2 py-1 text-right text-xs transition-colors focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
     [class]="
       overrideValue() != null
-        ? 'border-amber-400/40 text-amber-400 focus:border-amber-400'
-        : 'border-zinc-700 text-zinc-200 focus:border-zinc-500'
+        ? 'border-accent-line text-accent focus:border-accent'
+        : 'border-input text-fg focus:border-input-hover'
     "
     [placeholder]="liveValue() != null ? liveValue()!.toString() : '—'"
     [(ngModel)]="overrideValue"
@@ -18,11 +18,11 @@
   @if (overrideValue() != null) {
     <button
       (click)="reset.emit()"
-      class="text-xs text-zinc-600 hover:text-amber-400 transition-colors shrink-0 w-10 text-right"
+      class="w-10 text-right text-xs text-subtle transition-colors shrink-0 hover:text-accent"
     >
       {{ liveValue() ?? '—' }} ↺
     </button>
   } @else {
-    <span class="text-xs text-zinc-700 shrink-0 w-10 text-right">live</span>
+    <span class="w-10 text-right text-xs text-faint shrink-0">live</span>
   }
 </div>
