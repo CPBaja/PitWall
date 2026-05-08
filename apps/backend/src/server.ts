@@ -38,12 +38,17 @@ app.get("/stream", (req, res) => {
 const startPolling = async () => {
   let lastUpdate: Date | null = null;
 
-  fullData = await parseAllData(initialFullData, {
-    static: true,
-    dynamics: true,
-    endurance: true,
-  });
-  broadcast(fullData);
+  try {
+    fullData = await parseAllData(initialFullData, {
+      static: true,
+      dynamics: true,
+      endurance: true,
+    });
+    fullData.lastUpdated = await getLastDataUpdate();
+    broadcast(fullData);
+  } catch (err) {
+    console.error("Initial data fetch error:", err);
+  }
 
   setInterval(async () => {
     try {

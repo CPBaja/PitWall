@@ -23,9 +23,9 @@ export class HeaderComponent {
   readonly connected = input<boolean>(false);
 
   readonly tabs = [
-    { label: 'Static', routerLink: ['/static', this.myCarNumber()] },
-    { label: 'Dynamic', routerLink: ['/dynamic', this.myCarNumber()] },
-    { label: 'Endurance', routerLink: ['/endurance', this.myCarNumber()] },
+    { label: 'Static', path: 'static' },
+    { label: 'Dynamic', path: 'dynamic' },
+    { label: 'Endurance', path: 'endurance' },
   ];
 
   constructor() {
@@ -56,5 +56,14 @@ export class HeaderComponent {
       this.myCarNumber.set(value);
       localStorage.setItem(MY_CAR_KEY, String(value));
     }
+  }
+
+  tabLink(path: string) {
+    return [`/${path}`, this.myCarNumber() ?? this.carNumberFromUrl() ?? 15];
+  }
+
+  private carNumberFromUrl(): number | null {
+    const match = this.router.url.match(/^\/(?:static|dynamic|endurance)\/(\d+)/);
+    return match ? Number(match[1]) : null;
   }
 }

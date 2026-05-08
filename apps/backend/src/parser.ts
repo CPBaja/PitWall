@@ -126,7 +126,7 @@ export const getLastDataUpdate = async () => {
   const text = await res.text();
   const $ = cheerio.load(text);
 
-  return parseDate($, "lblSiteLocationUpdate");
+  return parseDate($, "#lblSiteLocationUpdate");
 };
 
 /** Create a Cheerio parser for the given car number and tab type */

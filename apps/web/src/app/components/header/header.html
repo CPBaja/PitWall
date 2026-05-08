@@ -1,6 +1,4 @@
-<div
-  class="flex items-center justify-between border-b border-line bg-canvas px-4 py-2 shrink-0"
->
+<div class="flex items-center justify-between border-b border-line bg-canvas px-4 py-2 shrink-0">
   <div class="flex items-center gap-3">
     <span class="text-xs tracking-widest text-muted uppercase">PitWall</span>
     <span class="text-faint">·</span>
@@ -8,7 +6,7 @@
     <nav class="flex items-center gap-1">
       @for (tab of tabs; track tab.label) {
         <a
-          [routerLink]="tab.routerLink"
+          [routerLink]="tabLink(tab.path)"
           routerLinkActive="text-accent border-accent-line"
           class="rounded border border-transparent px-2 py-0.5 text-xs tracking-widest text-muted uppercase transition-colors hover:text-fg-soft"
           >{{ tab.label }}</a
@@ -45,9 +43,7 @@
         class="w-1.5 h-1.5 rounded-full"
         [class]="connected() ? 'bg-success' : 'bg-danger animate-pulse'"
       ></div>
-      <span class="text-xs text-muted">{{
-        connected() ? 'Live' : 'Disconnected'
-      }}</span>
+      <span class="text-xs text-muted">{{ connected() ? 'Live' : 'Disconnected' }}</span>
     </div>
   </div>
 </div>
