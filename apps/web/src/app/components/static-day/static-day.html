@@ -1,9 +1,9 @@
-<div class="flex flex-1 min-h-0 overflow-hidden bg-zinc-950 text-white font-mono">
+<div class="flex flex-1 min-h-0 overflow-hidden bg-canvas text-fg font-mono">
   <!-- Left: overall leaderboard -->
-  <div class="flex min-h-0 flex-col overflow-hidden border-r border-zinc-800" [style]="leftWidth()">
-    <div class="px-3 py-1.5 border-b border-zinc-800 shrink-0 flex items-center justify-between">
-      <span class="text-xs tracking-widest uppercase text-zinc-500">Overall Static</span>
-      <span class="text-xs text-zinc-600">{{ scores().length }} cars</span>
+  <div class="flex min-h-0 flex-col overflow-hidden border-r border-line" [style]="leftWidth()">
+    <div class="flex items-center justify-between border-b border-line px-3 py-1.5 shrink-0">
+      <span class="text-xs tracking-widest text-muted uppercase">Overall Static</span>
+      <span class="text-xs text-subtle">{{ scores().length }} cars</span>
     </div>
     <pw-pinned-leaderboard
       [scores]="scores()"
@@ -17,14 +17,14 @@
 
   <!-- Right: event tables -->
   <div
-    class="flex flex-col flex-1 min-w-0 min-h-0 overflow-hidden border-r border-zinc-800"
+    class="flex flex-1 min-w-0 min-h-0 flex-col overflow-hidden border-r border-line"
     [class]="selectedCar() ? 'hidden xl:flex' : 'flex'"
   >
     <!-- Design -->
-    <div class="flex flex-1 min-h-0 flex-col overflow-hidden border-b border-zinc-800">
-      <div class="px-3 py-1.5 border-b border-zinc-800 shrink-0 flex items-center justify-between">
-        <span class="text-xs tracking-widest uppercase text-zinc-500">Design</span>
-        <span class="text-xs text-zinc-600">all · of 150</span>
+    <div class="flex flex-1 min-h-0 flex-col overflow-hidden border-b border-line">
+      <div class="flex items-center justify-between border-b border-line px-3 py-1.5 shrink-0">
+        <span class="text-xs tracking-widest text-muted uppercase">Design</span>
+        <span class="text-xs text-subtle">all · of 150</span>
       </div>
       <pw-event-table
         [rows]="designRows()"
@@ -36,10 +36,10 @@
     </div>
 
     <!-- Cost -->
-    <div class="flex flex-1 min-h-0 flex-col overflow-hidden border-b border-zinc-800">
-      <div class="px-3 py-1.5 border-b border-zinc-800 shrink-0 flex items-center justify-between">
-        <span class="text-xs tracking-widest uppercase text-zinc-500">Cost</span>
-        <span class="text-xs text-zinc-600">top 10 · of 100</span>
+    <div class="flex flex-1 min-h-0 flex-col overflow-hidden border-b border-line">
+      <div class="flex items-center justify-between border-b border-line px-3 py-1.5 shrink-0">
+        <span class="text-xs tracking-widest text-muted uppercase">Cost</span>
+        <span class="text-xs text-subtle">top 10 · of 100</span>
       </div>
       <pw-event-table
         [rows]="costRows()"
@@ -52,9 +52,9 @@
 
     <!-- BP -->
     <div class="flex flex-1 min-h-0 flex-col overflow-hidden">
-      <div class="px-3 py-1.5 border-b border-zinc-800 shrink-0 flex items-center justify-between">
-        <span class="text-xs tracking-widest uppercase text-zinc-500">Business Presentation</span>
-        <span class="text-xs text-zinc-600">all · of 70</span>
+      <div class="flex items-center justify-between border-b border-line px-3 py-1.5 shrink-0">
+        <span class="text-xs tracking-widest text-muted uppercase">Business Presentation</span>
+        <span class="text-xs text-subtle">all · of 70</span>
       </div>
       <pw-event-table
         [rows]="bpRows()"

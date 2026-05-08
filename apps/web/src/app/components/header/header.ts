@@ -2,6 +2,7 @@ import { Component, effect, inject, input, output, signal } from '@angular/core'
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { ThemeService } from '../../services/theme-service';
 
 export type NavTab = 'static' | 'dynamic' | 'endurance';
 const MY_CAR_KEY = 'pitwall_my_car';
@@ -15,6 +16,7 @@ const MY_CAR_KEY = 'pitwall_my_car';
 })
 export class HeaderComponent {
   private router = inject(Router);
+  readonly theme = inject(ThemeService);
 
   readonly myCarNumber = signal<number | null>(null);
   readonly lastUpdated = input<Date | null>(null);

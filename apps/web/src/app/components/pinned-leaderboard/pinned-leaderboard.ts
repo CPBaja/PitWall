@@ -79,9 +79,13 @@ export class PinnedLeaderboardComponent {
   });
 
   rowClass(carNumber: number): string {
-    if (carNumber === this.selectedCar()) return 'bg-zinc-800/60 border-l-2 border-l-amber-400';
-    if (carNumber === this.myCarNumber()) return 'bg-amber-400/5 hover:bg-amber-400/10';
-    return 'hover:bg-zinc-800/30';
+    if (carNumber === this.selectedCar()) {
+      return 'bg-row-selected border-l-2 border-l-accent';
+    }
+    if (carNumber === this.myCarNumber()) {
+      return 'bg-accent-soft hover:bg-accent-soft-hover';
+    }
+    return 'hover:bg-row-hover';
   }
 
   fmt(val: number | string | null | undefined): string {
