@@ -45,6 +45,24 @@ const parseText = ($: cheerio.CheerioAPI, selector: any) => {
   return $(selector).text().trim() || null;
 };
 
+const dynamicEventCanonicalNames: Record<string, string> = {
+  // The scoring model currently treats Hill Climb as the traction event.
+  "hill climb": "Traction",
+  "rock crawl": "Rock Crawl",
+  acceleration: "Acceleration",
+  maneuverability: "Maneuverability",
+};
+
+const normalizeDynamicEventName = (eventName: string | null) => {
+  if (eventName === null) {
+    return null;
+  }
+
+  const trimmed = eventName.trim();
+  const normalized = trimmed.toLowerCase().replace(/\s+/g, " ");
+  return dynamicEventCanonicalNames[normalized] ?? trimmed;
+};
+
 const parseNumber = ($: cheerio.CheerioAPI, selector: any) => {
   const text =
     $(selector)
@@ -169,7 +187,7 @@ const parseDynamicsData = async (carNumber: number): Promise<DynamicsData> => {
     const cells = $(tr).find("td");
 
     runs.push({
-      event: parseText($, cells[0]),
+      event: normalizeDynamicEventName(parseText($, cells[0])),
       status: parseText($, cells[1]),
       position: parseNumber($, cells[2]),
       correctedTime: parseNumber($, cells[3]),
