@@ -63,6 +63,8 @@ const startPolling = async () => {
           endurance: true,
         });
 
+        fullData.lastUpdated = newDate;
+
         lastUpdate = newDate;
         broadcast(fullData);
       } else {

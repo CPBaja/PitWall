@@ -61,6 +61,7 @@ function buildTeamResults(
   return {
     carNumber: car.carNumber,
 
+    passedTech: staticData?.passedTech ?? undefined,
     designScore: override.designScore ?? staticData?.designScore ?? undefined,
     designPenalty: override.designPenalty ?? staticData?.designPenalty ?? undefined,
     costReportScore: override.costReport ?? staticData?.costReport ?? undefined,

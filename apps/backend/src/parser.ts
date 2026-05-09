@@ -17,7 +17,7 @@ interface PollOptions {
 }
 
 const BASE_URL = "https://mobile.bajasae.net/";
-type TabType = "static" | "dynamics" | "endurance";
+type TabType = "statics" | "dynamics" | "endurance";
 
 const carNumbers = [
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26,
@@ -139,7 +139,7 @@ const createParser = async (carNumber: number, tab: TabType) => {
 };
 
 const parseStaticData = async (carNumber: number) => {
-  const $ = await createParser(carNumber, "static");
+  const $ = await createParser(carNumber, "statics");
 
   const data: StaticData = {
     carNumber: carNumber,

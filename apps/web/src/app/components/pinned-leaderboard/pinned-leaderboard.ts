@@ -63,9 +63,12 @@ export class PinnedLeaderboardComponent {
         const bVal = col
           ? (col.getValue(row(b)) ?? -Infinity)
           : (b.score?.staticTotal ?? -Infinity);
-        return dir === 'desc'
-          ? (bVal as number) - (aVal as number)
-          : (aVal as number) - (bVal as number);
+        const result =
+          typeof aVal === 'string' || typeof bVal === 'string'
+            ? String(aVal).localeCompare(String(bVal))
+            : (aVal as number) - (bVal as number);
+
+        return dir === 'desc' ? -result : result;
       })
       .map((r, i) => ({ ...r, rank: i + 1 }));
   });

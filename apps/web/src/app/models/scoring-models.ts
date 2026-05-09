@@ -2,6 +2,7 @@ export interface TeamResults {
   carNumber: number;
 
   // Static
+  passedTech?: string;
   designScore?: number;
   designPenalty?: number;
   costReportScore?: number;
@@ -39,6 +40,7 @@ export interface FieldStats {
 export interface TeamScore {
   carNumber: number;
 
+  passedTech: string | null;
   designScore: number | null;
   costScore: number | null;
   bpScore: number | null;
@@ -182,6 +184,7 @@ export function calcTeamScore(
 
   return {
     carNumber: team.carNumber,
+    passedTech: team.passedTech ?? null,
     designScore: design,
     costScore: cost,
     bpScore: bp,

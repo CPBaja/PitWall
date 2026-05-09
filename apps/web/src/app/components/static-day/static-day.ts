@@ -55,7 +55,13 @@ export class StaticDayComponent {
   // ── Column defs ──────────────────────────────────────────────────────────
 
   readonly staticColumns: TableColumn[] = [
-    { key: 'tech', label: 'Tech', getValue: (s) => s.car?.staticData?.passedTech, isText: true },
+    {
+      key: 'tech',
+      label: 'Tech',
+      getValue: (s) => s.score?.passedTech ?? s.car?.staticData?.passedTech,
+      format: formatTech,
+      isText: true,
+    },
     { key: 'design', label: 'Design', getValue: (s) => s.score?.designScore },
     { key: 'cost', label: 'Cost', getValue: (s) => s.score?.costScore },
     { key: 'bp', label: 'BP', getValue: (s) => s.score?.bpScore },
@@ -87,7 +93,13 @@ export class StaticDayComponent {
     },
     { key: 'report', label: 'Report', getValue: (s) => s.car?.staticData?.costReport },
     { key: 'penalty', label: 'Penalty', getValue: (s) => s.car?.staticData?.costPenalty },
-    { key: 'tech', label: 'Tech', getValue: (s) => s.car?.staticData?.passedTech, isText: true },
+    {
+      key: 'tech',
+      label: 'Tech',
+      getValue: (s) => s.score?.passedTech ?? s.car?.staticData?.passedTech,
+      format: formatTech,
+      isText: true,
+    },
   ];
 
   readonly bpColumns: TableColumn[] = [
@@ -114,4 +126,13 @@ export class StaticDayComponent {
   readonly costRows = computed(() => this.sortedByField((r) => r.score?.costScore));
 
   readonly bpRows = computed(() => this.sortedByField((r) => r.car?.staticData?.bpScore));
+}
+
+function formatTech(value: number | string | null | undefined): string {
+  if (typeof value !== 'string') {
+    return '—';
+  }
+
+  const status = value.trim();
+  return status.toLowerCase() === 'not yet' ? status : 'Passed';
 }
