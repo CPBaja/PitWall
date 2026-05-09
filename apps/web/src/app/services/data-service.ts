@@ -1,7 +1,6 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { FullData } from '../models/types';
-
-const SSE_URL = 'http://localhost:3001/stream';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +24,7 @@ export class DataService {
   private reconnectTimeout: number | null = null;
   private reconnectDelay = 2_000;
 
-  connect(url = SSE_URL) {
+  connect(url = environment.SSE_URL) {
     if (this.es) {
       return;
     }
