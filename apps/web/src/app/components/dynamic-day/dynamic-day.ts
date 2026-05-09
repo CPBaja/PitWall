@@ -4,7 +4,6 @@ import { ScoringService } from '../../services/scoring-service';
 import { PinnedLeaderboardComponent } from '../pinned-leaderboard/pinned-leaderboard';
 import { EventTableComponent } from '../event-table/event-table';
 import { CarPanelComponent } from '../car-panel/car-panel';
-import { FieldStatsBarComponent, FieldStatsItem } from '../field-stats-bar/field-stats-bar';
 import { TableColumn, TableRow } from '../static-day/static-day';
 import { DynamicRun } from '../../models/types';
 
@@ -18,12 +17,7 @@ const dynamicEventNames = {
 @Component({
   selector: 'pw-dynamic-day',
   standalone: true,
-  imports: [
-    PinnedLeaderboardComponent,
-    EventTableComponent,
-    CarPanelComponent,
-    FieldStatsBarComponent,
-  ],
+  imports: [PinnedLeaderboardComponent, EventTableComponent, CarPanelComponent],
   host: { class: 'contents' },
   templateUrl: './dynamic-day.html',
 })
@@ -156,50 +150,10 @@ export class DynamicDayComponent {
 
   readonly specialtyRows = computed(() => this.sortedByScore((r) => r.score?.specialtyScore));
 
-  readonly statItems = computed<FieldStatsItem[]>(() => {
-    const stats = this.fieldStats();
-    const tractionTMin = 'tMin' in stats.traction ? stats.traction.tMin : null;
-    const specialtyTMin = stats.specialty.scoring === 'time' ? stats.specialty.tMin : null;
-
-    return [
-      this.statItem(
-        'acceleration',
-        'Acceleration',
-        stats.accel.tMin,
-        (r) => r.score?.accelerationScore,
-      ),
-      this.statItem(
-        'maneuverability',
-        'Maneuverability',
-        stats.maneuv.tMin,
-        (r) => r.score?.maneuverabilityScore,
-      ),
-      this.statItem('traction', 'Traction', tractionTMin, (r) => r.score?.tractionScore),
-      this.statItem('specialty', 'Specialty', specialtyTMin, (r) => r.score?.specialtyScore),
-    ];
-  });
-
   private sortedByScore(getValue: (row: TableRow) => number | null | undefined): TableRow[] {
     return this.scores()
       .map((score) => ({ score, car: this.carMap().get(score.carNumber) ?? null }))
       .sort((a, b) => (getValue(b) ?? -1) - (getValue(a) ?? -1));
-  }
-
-  private statItem(
-    key: string,
-    label: string,
-    tMin: number | null,
-    getScore: (row: TableRow) => number | null | undefined,
-  ): FieldStatsItem {
-    const best = this.sortedByScore(getScore).find((r) => getScore(r) != null);
-
-    return {
-      key,
-      label,
-      tMin: tMin === 0 ? null : tMin,
-      bestCarNumber: best?.score?.carNumber ?? null,
-      bestTeamName: best?.car?.teamName ?? null,
-    };
   }
 
   private run(row: TableRow, eventName: string): DynamicRun | null {

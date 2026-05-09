@@ -8,7 +8,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsc && node built/server.js"
+    "start": "tsc && node built/server.js"
   },
   "dependencies": {
     "cheerio": "^1.2.0",

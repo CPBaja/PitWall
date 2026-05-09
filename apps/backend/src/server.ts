@@ -3,7 +3,7 @@ import { getLastDataUpdate, initialFullData, parseAllData } from "./parser";
 import { FullData } from "./models";
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const POLL_INTERVAL = 60 * 1000;
 
 let fullData: FullData = initialFullData;
