@@ -168,7 +168,13 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
             dMin: 0,
             dMax: Math.max(0, ...specNonCompleters.map((t) => t.specialtyDistance ?? 0)),
           }
-        : { scoring: 'time', tMin: Math.min(...specCompleters.map((t) => t.specialtyTime!)) },
+        : specNonCompleters.length === 0
+          ? { scoring: 'time', tMin: Math.min(...specCompleters.map((t) => t.specialtyTime!)) }
+          : {
+              scoring: 'hybrid',
+              tMin: Math.min(...specCompleters.map((t) => t.specialtyTime!)),
+              courseLen: Math.max(0, ...specNonCompleters.map((t) => t.specialtyDistance ?? 0)),
+            },
 
     endurance: {
       lMax: laps.length ? Math.max(...laps) : 0,

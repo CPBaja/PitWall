@@ -33,7 +33,8 @@ export interface FieldStats {
   maneuv: { tMin: number };
   specialty:
     | { scoring: 'time'; tMin: number }
-    | { scoring: 'distance'; dMin: number; dMax: number };
+    | { scoring: 'distance'; dMin: number; dMax: number }
+    | { scoring: 'hybrid'; tMin: number; courseLen: number };
   endurance: { lMax: number; lMin: number };
 }
 
@@ -134,11 +135,24 @@ function scoreManeuverability(t: TeamResults, f: FieldStats): number | null {
 
 function scoreSpecialty(t: TeamResults, f: FieldStats): number | null {
   if (f.specialty.scoring === 'time') {
-    if (t.specialtyTime == null) return null;
+    if (t.specialtyTime == null || t.specialtyTime === 0) return null;
     return scoreByTime(70, t.specialtyTime, f.specialty.tMin, 2.5);
-  } else {
+  } else if (f.specialty.scoring === 'distance') {
     if (t.specialtyDistance == null) return null;
     return scoreByDistance(70, t.specialtyDistance, f.specialty.dMin, f.specialty.dMax);
+  } else {
+    const { tMin, courseLen } = f.specialty;
+    if (t.specialtyTime != null && t.specialtyTime > 0)
+      return scoreByTime(70, t.specialtyTime, tMin, 2.5);
+    if (t.specialtyDistance != null) {
+      if (courseLen <= 0) return null;
+      return clamp(
+        70 * (t.specialtyDistance / courseLen) * scoreByTime(70, tMin * 2.5, tMin, 2.5),
+        0,
+        35,
+      );
+    }
+    return null;
   }
 }
 
