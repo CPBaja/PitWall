@@ -136,7 +136,7 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
 
   const completers = teams.filter((t) => t.tractionTime != null && t.tractionTime > 0);
   const nonCompleters = teams.filter(
-    (t) => t.tractionTime == null || t.tractionTime === 0,
+    (t) => t.tractionTime === 0 || (t.tractionDistance != null && t.tractionTime == null),
   );
   const method = completers.length === 0 ? 1 : nonCompleters.length === 0 ? 2 : 3;
 
