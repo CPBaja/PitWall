@@ -79,6 +79,6 @@
 
   <!-- Car panel -->
   @if (selectedCar()) {
-    <pw-car-panel [carNumber]="selectedCar()!" (close)="selectedCar.set(null)" />
+    <pw-car-panel [carNumber]="selectedCar()!" mode="dynamic" (close)="selectedCar.set(null)" />
   }
 </div>
