@@ -4,6 +4,14 @@ import { DataService } from '../../services/data-service';
 import { OverrideService, CarOverrides } from '../../services/override-service';
 import { ScoringService } from '../../services/scoring-service';
 import { OverrideFieldComponent } from '../override-field/override-field';
+import { DynamicRun } from '../../models/types';
+
+const dynamicEventNames = {
+  acceleration: 'Acceleration',
+  maneuverability: 'Maneuverability',
+  traction: 'Traction',
+  specialty: 'Rock Crawl',
+} as const;
 
 @Component({
   selector: 'pw-car-panel',
@@ -14,6 +22,7 @@ import { OverrideFieldComponent } from '../override-field/override-field';
 })
 export class CarPanelComponent {
   carNumber = input.required<number>();
+  mode = input<'static' | 'dynamic'>('static');
   close = output<void>();
 
   private data = inject(DataService);
@@ -24,15 +33,57 @@ export class CarPanelComponent {
   readonly score = computed(() => this.scoring.getScore(this.carNumber()));
   readonly override = computed(() => this.overrides.getForCar(this.carNumber()));
   readonly hasOverrides = computed(() => this.overrides.overriddenCars().has(this.carNumber()));
+  readonly isDynamic = computed(() => this.mode() === 'dynamic');
   readonly techStatus = computed(() => this.car()?.staticData?.passedTech?.trim() || null);
   readonly passedTech = computed(() => {
     const status = this.techStatus()?.toLowerCase();
     return status != null && status !== 'not yet';
   });
 
+  readonly accelerationRun = computed(() => this.run(dynamicEventNames.acceleration));
+  readonly maneuverabilityRun = computed(() => this.run(dynamicEventNames.maneuverability));
+  readonly tractionRun = computed(() => this.run(dynamicEventNames.traction));
+  readonly specialtyRun = computed(() => this.run(dynamicEventNames.specialty));
+
   readonly scoreSummary = computed(() => {
     const s = this.score();
     const ov = this.override();
+    if (this.isDynamic()) {
+      const hasDynamicOverrides =
+        ov.accelerationTime != null ||
+        ov.maneuverabilityTime != null ||
+        ov.tractionTime != null ||
+        ov.tractionDist != null ||
+        ov.specialtyTime != null ||
+        ov.specialtyDist != null;
+      return [
+        {
+          label: 'Accel',
+          value: format(s?.accelerationScore),
+          overridden: ov.accelerationTime != null,
+        },
+        {
+          label: 'Maneuv',
+          value: format(s?.maneuverabilityScore),
+          overridden: ov.maneuverabilityTime != null,
+        },
+        {
+          label: 'Traction',
+          value: format(s?.tractionScore),
+          overridden: ov.tractionTime != null || ov.tractionDist != null,
+        },
+        {
+          label: 'Specialty',
+          value: format(s?.specialtyScore),
+          overridden: ov.specialtyTime != null || ov.specialtyDist != null,
+        },
+        {
+          label: 'Total',
+          value: format(s?.dynamicTotal),
+          overridden: hasDynamicOverrides,
+        },
+      ];
+    }
     return [
       {
         label: 'Design',
@@ -68,6 +119,14 @@ export class CarPanelComponent {
   }
   resetAll() {
     this.overrides.resetCar(this.carNumber());
+  }
+
+  private run(eventName: string): DynamicRun | null {
+    return (
+      this.car()?.dynamicsData?.runs.find(
+        (run) => run.event === eventName && run.position !== null,
+      ) ?? null
+    );
   }
 }
 

@@ -39,7 +39,11 @@
   </div>
 
   <!-- Score chips -->
-  <div class="grid grid-cols-4 gap-px border-b border-line bg-grid shrink-0">
+  <div
+    class="grid gap-px border-b border-line bg-grid shrink-0"
+    [class.grid-cols-4]="!isDynamic()"
+    [class.grid-cols-5]="isDynamic()"
+  >
     @for (s of scoreSummary(); track s.label) {
       <div class="bg-panel px-2 py-2 text-center">
         <div class="mb-1 text-xs text-subtle">{{ s.label }}</div>
@@ -52,73 +56,139 @@
 
   <!-- Override inputs -->
   <div class="flex-1 overflow-y-auto px-4 py-3 space-y-4">
-    <div>
-      <div class="mb-2 text-xs tracking-widest text-subtle uppercase">Design</div>
-      <pw-override-field
-        label="Score"
-        hint="/ 150"
-        [liveValue]="car()?.staticData?.designScore"
-        [overrideValue]="override().designScore ?? null"
-        (overrideValueChange)="set('designScore', $event)"
-        (reset)="reset('designScore')"
-      />
-      <pw-override-field
-        label="Penalty"
-        hint="−"
-        [liveValue]="car()?.staticData?.designPenalty"
-        [overrideValue]="override().designPenalty ?? null"
-        (overrideValueChange)="set('designPenalty', $event)"
-        (reset)="reset('designPenalty')"
-      />
-    </div>
+    @if (isDynamic()) {
+      <div>
+        <div class="mb-2 text-xs tracking-widest text-subtle uppercase">Acceleration</div>
+        <pw-override-field
+          label="Time"
+          hint="s"
+          [liveValue]="accelerationRun()?.correctedTime"
+          [overrideValue]="override().accelerationTime ?? null"
+          (overrideValueChange)="set('accelerationTime', $event)"
+          (reset)="reset('accelerationTime')"
+        />
+      </div>
 
-    <div>
-      <div class="mb-2 text-xs tracking-widest text-subtle uppercase">Cost</div>
-      <pw-override-field
-        label="Proto"
-        hint="/ 85"
-        [liveValue]="car()?.staticData?.costPrototype"
-        [overrideValue]="override().costPrototype ?? null"
-        (overrideValueChange)="set('costPrototype', $event)"
-        (reset)="reset('costPrototype')"
-      />
-      <pw-override-field
-        label="Report"
-        hint="/ 15"
-        [liveValue]="car()?.staticData?.costReport"
-        [overrideValue]="override().costReport ?? null"
-        (overrideValueChange)="set('costReport', $event)"
-        (reset)="reset('costReport')"
-      />
-      <pw-override-field
-        label="Penalty"
-        hint="−"
-        [liveValue]="car()?.staticData?.costPenalty"
-        [overrideValue]="override().costPenalty ?? null"
-        (overrideValueChange)="set('costPenalty', $event)"
-        (reset)="reset('costPenalty')"
-      />
-    </div>
+      <div>
+        <div class="mb-2 text-xs tracking-widest text-subtle uppercase">Maneuverability</div>
+        <pw-override-field
+          label="Time"
+          hint="s"
+          [liveValue]="maneuverabilityRun()?.correctedTime"
+          [overrideValue]="override().maneuverabilityTime ?? null"
+          (overrideValueChange)="set('maneuverabilityTime', $event)"
+          (reset)="reset('maneuverabilityTime')"
+        />
+      </div>
 
-    <div>
-      <div class="mb-2 text-xs tracking-widest text-subtle uppercase">Business Presentation</div>
-      <pw-override-field
-        label="Score"
-        hint="/ 70"
-        [liveValue]="car()?.staticData?.bpScore"
-        [overrideValue]="override().bpScore ?? null"
-        (overrideValueChange)="set('bpScore', $event)"
-        (reset)="reset('bpScore')"
-      />
-      <pw-override-field
-        label="Penalty"
-        hint="−"
-        [liveValue]="car()?.staticData?.bpPenalty"
-        [overrideValue]="override().bpPenalty ?? null"
-        (overrideValueChange)="set('bpPenalty', $event)"
-        (reset)="reset('bpPenalty')"
-      />
-    </div>
+      <div>
+        <div class="mb-2 text-xs tracking-widest text-subtle uppercase">Traction</div>
+        <pw-override-field
+          label="Time"
+          hint="s"
+          [liveValue]="tractionRun()?.correctedTime"
+          [overrideValue]="override().tractionTime ?? null"
+          (overrideValueChange)="set('tractionTime', $event)"
+          (reset)="reset('tractionTime')"
+        />
+        <pw-override-field
+          label="Dist"
+          [hint]="tractionRun()?.distance?.unit ?? undefined"
+          [liveValue]="tractionRun()?.distance?.value"
+          [overrideValue]="override().tractionDist ?? null"
+          (overrideValueChange)="set('tractionDist', $event)"
+          (reset)="reset('tractionDist')"
+        />
+      </div>
+
+      <div>
+        <div class="mb-2 text-xs tracking-widest text-subtle uppercase">Specialty</div>
+        <pw-override-field
+          label="Time"
+          hint="s"
+          [liveValue]="specialtyRun()?.correctedTime"
+          [overrideValue]="override().specialtyTime ?? null"
+          (overrideValueChange)="set('specialtyTime', $event)"
+          (reset)="reset('specialtyTime')"
+        />
+        <pw-override-field
+          label="Dist"
+          [hint]="specialtyRun()?.distance?.unit ?? undefined"
+          [liveValue]="specialtyRun()?.distance?.value"
+          [overrideValue]="override().specialtyDist ?? null"
+          (overrideValueChange)="set('specialtyDist', $event)"
+          (reset)="reset('specialtyDist')"
+        />
+      </div>
+    } @else {
+      <div>
+        <div class="mb-2 text-xs tracking-widest text-subtle uppercase">Design</div>
+        <pw-override-field
+          label="Score"
+          hint="/ 150"
+          [liveValue]="car()?.staticData?.designScore"
+          [overrideValue]="override().designScore ?? null"
+          (overrideValueChange)="set('designScore', $event)"
+          (reset)="reset('designScore')"
+        />
+        <pw-override-field
+          label="Penalty"
+          hint="−"
+          [liveValue]="car()?.staticData?.designPenalty"
+          [overrideValue]="override().designPenalty ?? null"
+          (overrideValueChange)="set('designPenalty', $event)"
+          (reset)="reset('designPenalty')"
+        />
+      </div>
+
+      <div>
+        <div class="mb-2 text-xs tracking-widest text-subtle uppercase">Cost</div>
+        <pw-override-field
+          label="Proto"
+          hint="/ 85"
+          [liveValue]="car()?.staticData?.costPrototype"
+          [overrideValue]="override().costPrototype ?? null"
+          (overrideValueChange)="set('costPrototype', $event)"
+          (reset)="reset('costPrototype')"
+        />
+        <pw-override-field
+          label="Report"
+          hint="/ 15"
+          [liveValue]="car()?.staticData?.costReport"
+          [overrideValue]="override().costReport ?? null"
+          (overrideValueChange)="set('costReport', $event)"
+          (reset)="reset('costReport')"
+        />
+        <pw-override-field
+          label="Penalty"
+          hint="−"
+          [liveValue]="car()?.staticData?.costPenalty"
+          [overrideValue]="override().costPenalty ?? null"
+          (overrideValueChange)="set('costPenalty', $event)"
+          (reset)="reset('costPenalty')"
+        />
+      </div>
+
+      <div>
+        <div class="mb-2 text-xs tracking-widest text-subtle uppercase">Business Presentation</div>
+        <pw-override-field
+          label="Score"
+          hint="/ 70"
+          [liveValue]="car()?.staticData?.bpScore"
+          [overrideValue]="override().bpScore ?? null"
+          (overrideValueChange)="set('bpScore', $event)"
+          (reset)="reset('bpScore')"
+        />
+        <pw-override-field
+          label="Penalty"
+          hint="−"
+          [liveValue]="car()?.staticData?.bpPenalty"
+          [overrideValue]="override().bpPenalty ?? null"
+          (overrideValueChange)="set('bpPenalty', $event)"
+          (reset)="reset('bpPenalty')"
+        />
+      </div>
+    }
   </div>
 
   @if (hasOverrides()) {
