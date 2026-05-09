@@ -23,6 +23,7 @@ export class HeaderComponent {
   readonly connected = input<boolean>(false);
 
   readonly tabs = [
+    { label: 'Overall', path: 'overall' },
     { label: 'Static', path: 'static' },
     { label: 'Dynamic', path: 'dynamic' },
     { label: 'Endurance', path: 'endurance' },
@@ -33,7 +34,7 @@ export class HeaderComponent {
       const car = this.myCarNumber();
       const url = this.router.url;
 
-      const activeTab = url.match(/^\/(static|dynamic|endurance)(?:\/|$)/)?.[1];
+      const activeTab = url.match(/^\/(overall|static|dynamic|endurance)(?:\/|$)/)?.[1];
 
       if (car != null && activeTab) {
         this.router.navigate([`/${activeTab}`, car]);
@@ -63,7 +64,7 @@ export class HeaderComponent {
   }
 
   private carNumberFromUrl(): number | null {
-    const match = this.router.url.match(/^\/(?:static|dynamic|endurance)\/(\d+)/);
+    const match = this.router.url.match(/^\/(?:overall|static|dynamic|endurance)\/(\d+)/);
     return match ? Number(match[1]) : null;
   }
 }

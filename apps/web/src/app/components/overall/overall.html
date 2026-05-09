@@ -1,0 +1,22 @@
+<div class="flex flex-1 min-h-0 overflow-hidden bg-canvas text-fg font-mono">
+  <!-- Overall leaderboard -->
+  <div class="flex flex-1 min-h-0 flex-col overflow-hidden">
+    <div class="flex items-center justify-between border-b border-line px-3 py-1.5 shrink-0">
+      <span class="text-xs tracking-widest text-muted uppercase">Overall</span>
+      <span class="text-xs text-subtle">{{ scores().length }} cars</span>
+    </div>
+    <pw-pinned-leaderboard
+      [scores]="scores()"
+      [carMap]="carMap()"
+      [myCarNumber]="myCarNumber()"
+      [selectedCar]="selectedCar()"
+      [columns]="overallColumns"
+      (carClick)="onCarClick($event)"
+    />
+  </div>
+
+  <!-- Car panel -->
+  @if (selectedCar()) {
+    <pw-car-panel [carNumber]="selectedCar()!" (close)="selectedCar.set(null)" />
+  }
+</div>
