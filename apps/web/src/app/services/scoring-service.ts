@@ -136,7 +136,7 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
 
   const completers = teams.filter((t) => t.tractionTime != null && t.tractionTime > 0);
   const nonCompleters = teams.filter(
-    (t) => t.tractionDistance != null && (t.tractionTime == null || t.tractionTime === 0),
+    (t) => (t.tractionTime == null && t.tractionDistance != null) || t.tractionTime === 0,
   );
   const method = completers.length === 0 ? 1 : nonCompleters.length === 0 ? 2 : 3;
 
@@ -153,7 +153,11 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
         ? { method: 1, dMin: 0, dMax: Math.max(0, ...tractionDists) }
         : method === 2
           ? { method: 2, tMin: Math.min(...tractionTimes) }
-          : { method: 3, tMin: Math.min(...tractionTimes), courseLen: Math.max(...tractionDists) },
+          : {
+              method: 3,
+              tMin: Math.min(...tractionTimes),
+              courseLen: Math.max(0, ...tractionDists),
+            },
 
     maneuv: { tMin: maneuvTimes.length ? Math.min(...maneuvTimes) : 0 },
 
