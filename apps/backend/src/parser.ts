@@ -45,7 +45,7 @@ const parseText = ($: cheerio.CheerioAPI, selector: any) => {
   return $(selector).text().trim() || null;
 };
 
-const dynamicEventAliases: Record<string, string> = {
+const dynamicEventCanonicalNames: Record<string, string> = {
   "hill climb": "Traction",
   "rock crawl": "Rock Crawl",
   acceleration: "Acceleration",
@@ -57,8 +57,9 @@ const normalizeDynamicEventName = (eventName: string | null) => {
     return null;
   }
 
-  const normalized = eventName.trim().toLowerCase().replace(/\s+/g, " ");
-  return dynamicEventAliases[normalized] ?? eventName.trim();
+  const trimmed = eventName.trim();
+  const normalized = trimmed.toLowerCase().replace(/\s+/g, " ");
+  return dynamicEventCanonicalNames[normalized] ?? trimmed;
 };
 
 const parseNumber = ($: cheerio.CheerioAPI, selector: any) => {
