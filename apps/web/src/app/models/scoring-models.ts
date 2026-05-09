@@ -70,6 +70,11 @@ export function scoreByTime(
   return clamp((sMax * (tMaxCap - tRun)) / (tMaxCap - tMin), 0, sMax);
 }
 
+export function scoreHybridCompleterByTime(sMax: number, tRun: number, tMin: number): number {
+  if (tRun <= 0 || tMin <= 0) return 0;
+  return clamp((sMax * tMin) / tRun, 0, sMax);
+}
+
 function scoreByDistance(sMax: number, dRun: number, dMin: number, dMax: number): number {
   if (dMax <= dMin) return 0;
   return clamp((sMax * (dRun - dMin)) / (dMax - dMin), 0, sMax);
@@ -119,7 +124,7 @@ function scoreTraction(t: TeamResults, f: FieldStats): number | null {
     case 3: {
       const { tMin, courseLen, minCompleterScore } = f.traction;
       if (t.tractionTime != null && t.tractionTime > 0)
-        return scoreByTime(70, t.tractionTime, tMin, 2.5);
+        return scoreHybridCompleterByTime(70, t.tractionTime, tMin);
       if (t.tractionDistance != null) {
         if (courseLen <= 0) return null;
         return clamp(
@@ -148,7 +153,7 @@ function scoreSpecialty(t: TeamResults, f: FieldStats): number | null {
   } else {
     const { tMin, courseLen, minCompleterScore } = f.specialty;
     if (t.specialtyTime != null && t.specialtyTime > 0)
-      return scoreByTime(70, t.specialtyTime, tMin, 2.5);
+      return scoreHybridCompleterByTime(70, t.specialtyTime, tMin);
     if (t.specialtyDistance != null) {
       if (courseLen <= 0) return null;
       return clamp(
