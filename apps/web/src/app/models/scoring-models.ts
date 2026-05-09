@@ -29,12 +29,12 @@ export interface FieldStats {
   traction:
     | { method: 1; dMin: number; dMax: number }
     | { method: 2; tMin: number }
-    | { method: 3; tMin: number; courseLen: number };
+    | { method: 3; tMin: number; courseLen: number; minCompleterScore: number };
   maneuv: { tMin: number };
   specialty:
     | { scoring: 'time'; tMin: number }
     | { scoring: 'distance'; dMin: number; dMax: number }
-    | { scoring: 'hybrid'; tMin: number; courseLen: number };
+    | { scoring: 'hybrid'; tMin: number; courseLen: number; minCompleterScore: number };
   endurance: { lMax: number; lMin: number };
 }
 
@@ -59,7 +59,12 @@ export interface TeamScore {
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
 
-function scoreByTime(sMax: number, tRun: number, tMin: number, capMultiplier: number): number {
+export function scoreByTime(
+  sMax: number,
+  tRun: number,
+  tMin: number,
+  capMultiplier: number,
+): number {
   const tMaxCap = tMin * capMultiplier;
   if (tRun > tMaxCap) return 0;
   return clamp((sMax * (tMaxCap - tRun)) / (tMaxCap - tMin), 0, sMax);
@@ -112,15 +117,15 @@ function scoreTraction(t: TeamResults, f: FieldStats): number | null {
       if (t.tractionTime == null || t.tractionTime === 0) return null;
       return scoreByTime(70, t.tractionTime, f.traction.tMin, 2.5);
     case 3: {
-      const { tMin, courseLen } = f.traction;
+      const { tMin, courseLen, minCompleterScore } = f.traction;
       if (t.tractionTime != null && t.tractionTime > 0)
         return scoreByTime(70, t.tractionTime, tMin, 2.5);
       if (t.tractionDistance != null) {
         if (courseLen <= 0) return null;
         return clamp(
-          70 * (t.tractionDistance / courseLen) * scoreByTime(70, tMin * 2.5, tMin, 2.5),
+          minCompleterScore * (t.tractionDistance / courseLen),
           0,
-          35,
+          minCompleterScore,
         );
       }
       return null;
@@ -141,15 +146,15 @@ function scoreSpecialty(t: TeamResults, f: FieldStats): number | null {
     if (t.specialtyDistance == null) return null;
     return scoreByDistance(70, t.specialtyDistance, f.specialty.dMin, f.specialty.dMax);
   } else {
-    const { tMin, courseLen } = f.specialty;
+    const { tMin, courseLen, minCompleterScore } = f.specialty;
     if (t.specialtyTime != null && t.specialtyTime > 0)
       return scoreByTime(70, t.specialtyTime, tMin, 2.5);
     if (t.specialtyDistance != null) {
       if (courseLen <= 0) return null;
       return clamp(
-        70 * (t.specialtyDistance / courseLen) * scoreByTime(70, tMin * 2.5, tMin, 2.5),
+        minCompleterScore * (t.specialtyDistance / courseLen),
         0,
-        35,
+        minCompleterScore,
       );
     }
     return null;

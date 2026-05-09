@@ -2,7 +2,13 @@ import { computed, inject, Injectable } from '@angular/core';
 import { DataService } from './data-service';
 import { CarOverrides, OverrideService } from './override-service';
 import { CarData } from '../models/types';
-import { FieldStats, scoreAllTeams, TeamResults, TeamScore } from '../models/scoring-models';
+import {
+  FieldStats,
+  scoreAllTeams,
+  scoreByTime,
+  TeamResults,
+  TeamScore,
+} from '../models/scoring-models';
 
 @Injectable({
   providedIn: 'root',
@@ -134,6 +140,8 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
   const maneuvTimes = times((t) => t.maneuverabilityTime);
   const laps = times((t) => t.enduranceLaps);
 
+  const tractionTMin = tractionTimes.length ? Math.min(...tractionTimes) : 0;
+
   const completers = teams.filter((t) => t.tractionTime != null && t.tractionTime > 0);
   const nonCompleters = teams.filter(
     (t) => (t.tractionTime == null && t.tractionDistance != null) || t.tractionTime === 0,
@@ -144,6 +152,8 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
   const specNonCompleters = teams.filter(
     (t) => t.specialtyDistance != null && (t.specialtyTime == null || t.specialtyTime === 0),
   );
+  const specTimes = specCompleters.map((t) => t.specialtyTime!);
+  const specTMin = specTimes.length ? Math.min(...specTimes) : 0;
 
   return {
     accel: { tMin: accelTimes.length ? Math.min(...accelTimes) : 0 },
@@ -152,11 +162,12 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
       method === 1
         ? { method: 1, dMin: 0, dMax: Math.max(0, ...tractionDists) }
         : method === 2
-          ? { method: 2, tMin: Math.min(...tractionTimes) }
+          ? { method: 2, tMin: tractionTMin }
           : {
               method: 3,
-              tMin: Math.min(...tractionTimes),
+              tMin: tractionTMin,
               courseLen: Math.max(0, ...tractionDists),
+              minCompleterScore: minCompleterScoreByTime(tractionTimes, tractionTMin, 70, 2.5),
             },
 
     maneuv: { tMin: maneuvTimes.length ? Math.min(...maneuvTimes) : 0 },
@@ -169,11 +180,12 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
             dMax: Math.max(0, ...specNonCompleters.map((t) => t.specialtyDistance ?? 0)),
           }
         : specNonCompleters.length === 0
-          ? { scoring: 'time', tMin: Math.min(...specCompleters.map((t) => t.specialtyTime!)) }
+          ? { scoring: 'time', tMin: specTMin }
           : {
               scoring: 'hybrid',
-              tMin: Math.min(...specCompleters.map((t) => t.specialtyTime!)),
+              tMin: specTMin,
               courseLen: Math.max(0, ...specNonCompleters.map((t) => t.specialtyDistance ?? 0)),
+              minCompleterScore: minCompleterScoreByTime(specTimes, specTMin, 70, 2.5),
             },
 
     endurance: {
@@ -181,4 +193,16 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
       lMin: laps.length ? Math.min(...laps) : 0,
     },
   };
+}
+
+function minCompleterScoreByTime(
+  times: number[],
+  tMin: number,
+  sMax: number,
+  capMultiplier: number,
+): number {
+  if (!times.length || tMin <= 0) {
+    return 0;
+  }
+  return Math.min(...times.map((time) => scoreByTime(sMax, time, tMin, capMultiplier)));
 }
