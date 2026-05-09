@@ -5,7 +5,7 @@ import { CarData } from '../models/types';
 import {
   FieldStats,
   scoreAllTeams,
-  scoreByTime,
+  scoreHybridCompleterByTime,
   TeamResults,
   TeamScore,
 } from '../models/scoring-models';
@@ -171,7 +171,7 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
               method: 3,
               tMin: tractionTMin,
               courseLen: tractionCourseLen,
-              minCompleterScore: minCompleterScoreByTime(tractionTimes, tractionTMin, 70, 2.5),
+              minCompleterScore: minCompleterScoreByTime(tractionTimes, tractionTMin, 70),
             },
 
     maneuv: { tMin: maneuvTimes.length ? Math.min(...maneuvTimes) : 0 },
@@ -189,7 +189,7 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
               scoring: 'hybrid',
               tMin: specTMin,
               courseLen: specialtyCourseLen,
-              minCompleterScore: minCompleterScoreByTime(specTimes, specTMin, 70, 2.5),
+              minCompleterScore: minCompleterScoreByTime(specTimes, specTMin, 70),
             },
 
     endurance: {
@@ -199,14 +199,9 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
   };
 }
 
-function minCompleterScoreByTime(
-  times: number[],
-  tMin: number,
-  sMax: number,
-  capMultiplier: number,
-): number {
+function minCompleterScoreByTime(times: number[], tMin: number, sMax: number): number {
   if (!times.length || tMin <= 0) {
     return 0;
   }
-  return Math.min(...times.map((time) => scoreByTime(sMax, time, tMin, capMultiplier)));
+  return Math.min(...times.map((time) => scoreHybridCompleterByTime(sMax, time, tMin)));
 }
