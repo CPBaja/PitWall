@@ -45,6 +45,32 @@ const parseText = ($: cheerio.CheerioAPI, selector: any) => {
   return $(selector).text().trim() || null;
 };
 
+const normalizeDynamicEventName = (eventName: string | null) => {
+  if (eventName === null) {
+    return null;
+  }
+
+  const normalized = eventName.trim().toLowerCase().replace(/\s+/g, " ");
+
+  if (normalized === "hill climb") {
+    return "Traction";
+  }
+
+  if (normalized === "rock crawl") {
+    return "Rock Crawl";
+  }
+
+  if (normalized === "acceleration") {
+    return "Acceleration";
+  }
+
+  if (normalized === "maneuverability") {
+    return "Maneuverability";
+  }
+
+  return eventName.trim();
+};
+
 const parseNumber = ($: cheerio.CheerioAPI, selector: any) => {
   const text =
     $(selector)
@@ -169,7 +195,7 @@ const parseDynamicsData = async (carNumber: number): Promise<DynamicsData> => {
     const cells = $(tr).find("td");
 
     runs.push({
-      event: parseText($, cells[0]),
+      event: normalizeDynamicEventName(parseText($, cells[0])),
       status: parseText($, cells[1]),
       position: parseNumber($, cells[2]),
       correctedTime: parseNumber($, cells[3]),
