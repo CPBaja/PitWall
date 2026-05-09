@@ -108,11 +108,12 @@ function scoreTraction(t: TeamResults, f: FieldStats): number | null {
       if (t.tractionDistance == null) return null;
       return scoreByDistance(70, t.tractionDistance, f.traction.dMin, f.traction.dMax);
     case 2:
-      if (t.tractionTime == null) return null;
+      if (t.tractionTime == null || t.tractionTime === 0) return null;
       return scoreByTime(70, t.tractionTime, f.traction.tMin, 2.5);
     case 3: {
       const { tMin, courseLen } = f.traction;
-      if (t.tractionTime != null) return scoreByTime(70, t.tractionTime, tMin, 2.5);
+      if (t.tractionTime != null && t.tractionTime > 0)
+        return scoreByTime(70, t.tractionTime, tMin, 2.5);
       if (t.tractionDistance != null)
         return clamp(
           70 * (t.tractionDistance / courseLen) * scoreByTime(70, tMin * 2.5, tMin, 2.5),
