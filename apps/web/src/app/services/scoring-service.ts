@@ -133,6 +133,8 @@ function resolveFinishOrder(
 function deriveFieldStats(teams: TeamResults[]): FieldStats {
   const times = (getter: (t: TeamResults) => number | undefined) =>
     teams.map(getter).filter((t): t is number => t != null && t > 0);
+  const maxDistance = (getter: (t: TeamResults) => number | undefined, subset: TeamResults[]) =>
+    Math.max(0, ...subset.map(getter).filter((d): d is number => d != null && d > 0));
 
   const accelTimes = times((t) => t.accelerationTime);
   const tractionTimes = times((t) => t.tractionTime);
@@ -146,12 +148,14 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
   const nonCompleters = teams.filter(
     (t) => (t.tractionTime == null && t.tractionDistance != null) || t.tractionTime === 0,
   );
+  const tractionCourseLen = maxDistance((t) => t.tractionDistance, completers);
   const method = completers.length === 0 ? 1 : nonCompleters.length === 0 ? 2 : 3;
 
   const specCompleters = teams.filter((t) => t.specialtyTime != null && t.specialtyTime > 0);
   const specNonCompleters = teams.filter(
     (t) => t.specialtyDistance != null && (t.specialtyTime == null || t.specialtyTime === 0),
   );
+  const specialtyCourseLen = maxDistance((t) => t.specialtyDistance, specCompleters);
   const specTimes = specCompleters.map((t) => t.specialtyTime!);
   const specTMin = specTimes.length ? Math.min(...specTimes) : 0;
 
@@ -166,7 +170,7 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
           : {
               method: 3,
               tMin: tractionTMin,
-              courseLen: Math.max(0, ...tractionDists),
+              courseLen: tractionCourseLen,
               minCompleterScore: minCompleterScoreByTime(tractionTimes, tractionTMin, 70, 2.5),
             },
 
@@ -184,7 +188,7 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
           : {
               scoring: 'hybrid',
               tMin: specTMin,
-              courseLen: Math.max(0, ...specNonCompleters.map((t) => t.specialtyDistance ?? 0)),
+              courseLen: specialtyCourseLen,
               minCompleterScore: minCompleterScoreByTime(specTimes, specTMin, 70, 2.5),
             },
 
