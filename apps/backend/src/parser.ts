@@ -46,6 +46,7 @@ const parseText = ($: cheerio.CheerioAPI, selector: any) => {
 };
 
 const dynamicEventCanonicalNames: Record<string, string> = {
+  // The scoring model currently treats Hill Climb as the traction event.
   "hill climb": "Traction",
   "rock crawl": "Rock Crawl",
   acceleration: "Acceleration",
