@@ -153,7 +153,11 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
         ? { method: 1, dMin: 0, dMax: Math.max(0, ...tractionDists) }
         : method === 2
           ? { method: 2, tMin: Math.min(...tractionTimes) }
-          : { method: 3, tMin: Math.min(...tractionTimes), courseLen: Math.max(...tractionDists) },
+          : {
+              method: 3,
+              tMin: Math.min(...tractionTimes),
+              courseLen: Math.max(0, ...tractionDists),
+            },
 
     maneuv: { tMin: maneuvTimes.length ? Math.min(...maneuvTimes) : 0 },
 
