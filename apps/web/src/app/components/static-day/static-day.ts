@@ -94,10 +94,9 @@ export class StaticDayComponent {
     { key: 'report', label: 'Report', getValue: (s) => s.car?.staticData?.costReport },
     { key: 'penalty', label: 'Penalty', getValue: (s) => s.car?.staticData?.costPenalty },
     {
-      key: 'tech',
-      label: 'Tech',
-      getValue: (s) => s.score?.passedTech ?? s.car?.staticData?.passedTech,
-      format: formatTech,
+      key: 'remarks',
+      label: 'Remarks',
+      getValue: (s) => s.car?.staticData?.costRemarks,
       isText: true,
     },
   ];
