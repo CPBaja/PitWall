@@ -231,6 +231,7 @@ const parseEnduranceData = async (
     }
 
     laps.push({
+      lapNumber: parseNumber($, cells[0]),
       passedAt: parseText($, cells[1]),
       segmentTime: parseTime(parseText($, cells[2])),
       lapTime: parseTime(parseText($, cells[3])),

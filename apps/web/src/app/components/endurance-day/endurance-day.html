@@ -1,0 +1,107 @@
+<div class="flex flex-1 min-h-0 overflow-hidden bg-canvas text-fg font-mono">
+  <div class="flex min-w-0 flex-1 min-h-0 flex-col overflow-hidden border-r border-line">
+    <div class="flex items-center justify-between gap-3 border-b border-line px-3 py-1.5 shrink-0">
+      <div class="flex items-center gap-3">
+        <span class="text-xs tracking-widest text-muted uppercase">Endurance</span>
+        <span class="text-xs text-subtle">{{ rows().length }} cars</span>
+      </div>
+
+      @let context = raceContext();
+      @if (context) {
+        <div class="hidden min-w-0 items-center gap-4 text-xs text-subtle md:flex">
+          @if (context.flagStatus) {
+            <span class="truncate">Flag {{ context.flagStatus }}</span>
+          }
+          @if (context.raceTime) {
+            <span class="truncate">Race {{ context.raceTime }}</span>
+          }
+          @if (context.leaderCarInfo) {
+            <span class="truncate">Leader {{ context.leaderCarInfo }}</span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="min-h-0 flex-1 overflow-auto">
+      <table class="min-w-[760px] w-full border-separate border-spacing-0 text-xs">
+        <thead class="sticky top-0 z-20 bg-canvas">
+          <tr class="text-left tracking-widest text-subtle uppercase">
+            <th class="w-14 border-b border-line px-3 py-1.5 font-normal">Pos</th>
+            <th class="w-16 border-b border-line px-3 py-1.5 font-normal">Car</th>
+            <th class="border-b border-line px-3 py-1.5 font-normal">Team</th>
+            <th class="w-20 border-b border-line px-3 py-1.5 text-center font-normal">Laps</th>
+            <th class="w-24 border-b border-line px-3 py-1.5 text-right font-normal">Best</th>
+            <th class="w-20 border-b border-line px-3 py-1.5 text-right font-normal">Lap</th>
+            <th class="w-24 border-b border-line px-3 py-1.5 text-right font-normal">Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (lapGroups().length === 0) {
+            <tr>
+              <td colspan="7" class="px-3 py-10 text-center text-xs text-subtle">
+                Waiting for endurance laps
+              </td>
+            </tr>
+          }
+
+          @for (group of lapGroups(); track group.key) {
+            @for (row of group.rows; track row.carNumber; let first = $first) {
+              <tr
+                (click)="onCarClick(row.carNumber)"
+                class="cursor-pointer border-b border-line-subtle transition-colors"
+                [class]="rowClass(row.carNumber, first)"
+              >
+                <td class="border-b border-line-subtle px-3 py-1 tabular-nums text-fg-soft">
+                  {{ formatNumber(row.position) }}
+                </td>
+                <td class="border-b border-line-subtle px-3 py-1">
+                  <span class="flex items-center gap-1">
+                    <span
+                      [class]="
+                        row.carNumber === myCarNumber()
+                          ? 'text-accent font-medium'
+                          : 'text-fg-soft'
+                      "
+                    >
+                      {{ row.carNumber }}
+                    </span>
+                    @if (row.hasOverrides) {
+                      <span class="w-1 h-1 rounded-full bg-accent shrink-0"></span>
+                    }
+                  </span>
+                </td>
+                <td class="border-b border-line-subtle px-3 py-1 text-muted">
+                  <div class="truncate">{{ row.teamName }}</div>
+                </td>
+                @if (first) {
+                  <td
+                    [attr.rowspan]="group.rows.length"
+                    class="border-b border-r border-line-subtle bg-panel-muted px-3 py-2 text-center align-top"
+                  >
+                    <div class="text-sm text-fg">{{ formatLapGroup(group.lapCount) }}</div>
+                    <div class="text-[10px] tracking-widest text-faint uppercase">
+                      {{ group.lapCount === 1 ? 'lap' : 'laps' }}
+                    </div>
+                  </td>
+                }
+                <td class="border-b border-line-subtle px-3 py-1 text-right tabular-nums text-fg">
+                  {{ formatDuration(row.bestLapTime) }}
+                </td>
+                <td class="border-b border-line-subtle px-3 py-1 text-right tabular-nums text-subtle">
+                  {{ formatLapNumber(row.bestLapNumber) }}
+                </td>
+                <td class="border-b border-line-subtle px-3 py-1 text-right tabular-nums text-fg">
+                  {{ formatScore(row.score?.enduranceScore) }}
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  @if (selectedCar()) {
+    <pw-car-panel [carNumber]="selectedCar()!" mode="endurance" (close)="selectedCar.set(null)" />
+  }
+</div>

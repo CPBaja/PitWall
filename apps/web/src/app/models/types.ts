@@ -49,6 +49,7 @@ export interface DynamicsData {
 }
 
 export interface LapRecord {
+  lapNumber: number | null;
   passedAt: string | null;
   segmentTime: number | null;
   lapTime: number | null;
