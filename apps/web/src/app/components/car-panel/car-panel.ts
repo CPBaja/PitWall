@@ -101,6 +101,11 @@ export class CarPanelComponent {
           overridden: ov.enduranceLaps != null,
         },
         {
+          label: 'Avg Lap',
+          value: formatDuration(this.car()?.enduranceData?.averageLapTime),
+          overridden: false,
+        },
+        {
           label: 'Score',
           value: format(s?.enduranceScore),
           overridden: hasEnduranceOverrides,
