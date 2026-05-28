@@ -19,11 +19,7 @@
         [class]="rowClass(+(row.score?.carNumber ?? 0))"
       >
         <span
-          [class]="
-            isMyCar(row.score?.carNumber ?? 0)
-              ? 'text-accent font-medium'
-              : 'text-fg-soft'
-          "
+          [class]="isMyCar(row.score?.carNumber ?? 0) ? 'text-accent font-medium' : 'text-fg-soft'"
         >
           {{ row.score?.carNumber }}
         </span>
@@ -36,5 +32,4 @@
       </div>
     }
   </div>
-
 </div>

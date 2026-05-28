@@ -58,9 +58,7 @@
                   <span class="flex items-center gap-1">
                     <span
                       [class]="
-                        row.carNumber === myCarNumber()
-                          ? 'text-accent font-medium'
-                          : 'text-fg-soft'
+                        row.carNumber === myCarNumber() ? 'text-accent font-medium' : 'text-fg-soft'
                       "
                     >
                       {{ row.carNumber }}
@@ -87,7 +85,9 @@
                 <td class="border-b border-line-subtle px-3 py-1 text-right tabular-nums text-fg">
                   {{ formatDuration(row.bestLapTime) }}
                 </td>
-                <td class="border-b border-line-subtle px-3 py-1 text-right tabular-nums text-subtle">
+                <td
+                  class="border-b border-line-subtle px-3 py-1 text-right tabular-nums text-subtle"
+                >
                   {{ formatLapNumber(row.bestLapNumber) }}
                 </td>
                 <td class="border-b border-line-subtle px-3 py-1 text-right tabular-nums text-fg">

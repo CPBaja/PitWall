@@ -127,11 +127,7 @@ function scoreTraction(t: TeamResults, f: FieldStats): number | null {
         return scoreHybridCompleterByTime(70, t.tractionTime, tMin);
       if (t.tractionDistance != null) {
         if (courseLen <= 0) return null;
-        return clamp(
-          minCompleterScore * (t.tractionDistance / courseLen),
-          0,
-          minCompleterScore,
-        );
+        return clamp(minCompleterScore * (t.tractionDistance / courseLen), 0, minCompleterScore);
       }
       return null;
     }
@@ -156,11 +152,7 @@ function scoreSpecialty(t: TeamResults, f: FieldStats): number | null {
       return scoreHybridCompleterByTime(70, t.specialtyTime, tMin);
     if (t.specialtyDistance != null) {
       if (courseLen <= 0) return null;
-      return clamp(
-        minCompleterScore * (t.specialtyDistance / courseLen),
-        0,
-        minCompleterScore,
-      );
+      return clamp(minCompleterScore * (t.specialtyDistance / courseLen), 0, minCompleterScore);
     }
     return null;
   }

@@ -27,11 +27,7 @@
         <span class="text-faint">{{ i + 1 }}</span>
         <span class="flex items-center gap-1">
           <span
-            [class]="
-              row.carNumber === myCarNumber()
-                ? 'text-accent font-medium'
-                : 'text-fg-soft'
-            "
+            [class]="row.carNumber === myCarNumber() ? 'text-accent font-medium' : 'text-fg-soft'"
           >
             {{ row.carNumber }}
           </span>
@@ -41,15 +37,11 @@
         </span>
         <span class="truncate text-muted">{{ row.teamName }}</span>
         @for (col of columns(); track col.key) {
-          <span
-            class="text-right tabular-nums"
-            [class]="col.highlight ? 'text-fg' : 'text-subtle'"
-          >
+          <span class="text-right tabular-nums" [class]="col.highlight ? 'text-fg' : 'text-subtle'">
             {{ fmt(col.getValue({ score: row.score, car: row.car }), col) }}
           </span>
         }
       </div>
     }
   </div>
-
 </div>
