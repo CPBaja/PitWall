@@ -1,7 +1,7 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { DataService } from './data-service';
 import { CarOverrides, OverrideService } from './override-service';
-import { CarData } from '../models/types';
+import { CarData, DynamicRun } from '../models/types';
 import {
   FieldStats,
   scoreAllTeams,
@@ -59,10 +59,19 @@ function buildTeamResults(
   const dynamicsData = car.dynamicsData;
   const enduranceData = car.enduranceData;
 
+  const specialtyRunMap: Map<string, { time?: number; distance?: number }> = new Map();
+
   const acceleration = bestRun(dynamicsData, 'Acceleration');
   const maneuverability = bestRun(dynamicsData, 'Maneuverability');
-  const traction = bestRun(dynamicsData, 'Traction');
-  const specialty = bestRun(dynamicsData, 'Rock Crawl');
+  // const traction = bestRun(dynamicsData, 'Traction');
+  // const specialty = bestRun(dynamicsData, 'Rock Crawl');
+  const specialtyRun = createSpecialtyMap(dynamicsData);
+  specialtyRun?.forEach((run, eventName) =>
+    specialtyRunMap.set(eventName, {
+      time: run.correctedTime ?? undefined,
+      distance: run.distance?.value ?? undefined,
+    }),
+  );
 
   return {
     carNumber: car.carNumber,
@@ -78,12 +87,10 @@ function buildTeamResults(
     bpPenalty: override.bpPenalty ?? staticData?.bpPenalty ?? undefined,
 
     accelerationTime: override.accelerationTime ?? acceleration?.correctedTime ?? undefined,
-    tractionTime: override.tractionTime ?? traction?.correctedTime ?? undefined,
-    tractionDistance: override.tractionDist ?? traction?.distance.value ?? undefined,
     maneuverabilityTime:
       override.maneuverabilityTime ?? maneuverability?.correctedTime ?? undefined,
-    specialtyTime: override.specialtyTime ?? specialty?.correctedTime ?? undefined,
-    specialtyDistance: override.specialtyDist ?? specialty?.distance.value ?? undefined,
+
+    specialtyRunMap: specialtyRunMap,
 
     enduranceLaps: override.enduranceLaps ?? enduranceData?.lapCount ?? undefined,
     finishOrder: finishOrders.get(car.carNumber) ?? undefined,
@@ -96,6 +103,27 @@ function bestRun(data: CarData['dynamicsData'], eventName: string) {
   }
 
   return data.runs.find((run) => run.event === eventName && run.position !== null) ?? null;
+}
+
+function createSpecialtyMap(data: CarData['dynamicsData']) {
+  if (!data) {
+    return null;
+  }
+
+  const specialtyMap = new Map<string, DynamicRun>();
+
+  data.runs
+    .filter(
+      (run) =>
+        !run.event?.toLowerCase().includes('accel') &&
+        !run.event?.toLowerCase().includes('maneuv') &&
+        run.position !== null,
+    )
+    .forEach((run) => {
+      if (run.event) specialtyMap.set(run.event, run);
+    });
+
+  return specialtyMap;
 }
 
 function resolveFinishOrder(
@@ -137,24 +165,87 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
     Math.max(0, ...subset.map(getter).filter((d): d is number => d != null && d > 0));
 
   const accelTimes = times((t) => t.accelerationTime);
-  const tractionTimes = times((t) => t.tractionTime);
-  const tractionDists = times((t) => t.tractionDistance);
   const maneuvTimes = times((t) => t.maneuverabilityTime);
   const laps = times((t) => t.enduranceLaps);
 
+  /* const tractionTimes = times((t) => t.tractionTime);
+  const tractionDists = times((t) => t.tractionDistance); */
+  
+  const specialtyRunMap = new Map<string, { times: number[]; distances: number[] }>();
+  teams.forEach((team) =>
+    team.specialtyRunMap?.forEach((run, eventName) => {
+      const current = specialtyRunMap.get(eventName);
+      if (current === undefined) {
+        specialtyRunMap.set(eventName, {
+          times: run.time ? [run.time] : [],
+          distances: run.distance ? [run.distance] : [],
+        });
+      } else {
+        specialtyRunMap.set(eventName, {
+          times: run.time ? [...current.times, run.time] : current.times,
+          distances: run.distance ? [...current.distances, run.distance] : current.distances,
+        });
+      }
+    }),
+  );
+
+  const specialtyTimes = specialtyRunMap;
+
+  specialtyRunMap.forEach((_, eventName) => {
+    const completers = teams.filter((team) => {
+      const specialtyRunData = team.specialtyRunMap?.get(eventName);  
+      if (!specialtyRunData) {
+        return false;
+      }
+      if (specialtyRunData.time === undefined) {
+        return false;
+      }
+      specialtyRunData.time !== null && specialtyRunData.time > 0;  
+    });
+
+    const nonCompleters = teams.filter((team) => {
+      const specialtyRunData = team.specialtyRunMap?.get(eventName);
+      if (!specialtyRunData) {
+        return false;
+      }
+      if (specialtyRunData.time === undefined) {
+        return false;
+      }
+      (specialtyRunData.time === null && specialtyRunData.distance != null) || specialtyRunData.time === 0;
+    });
+
+    // mintime
+    const tMin = teams.filter((team) => {
+      const specialtyRunData = team.specialtyRunMap?.get(eventName);
+
+      if (!specialtyRunData) {
+        return false;
+      }
+
+      if (specialtyRunData.time === undefined) {
+        return false;
+      }
+      
+      specialtyRunData.time.length ? Math.min(...specialtyRunData.time) : 0;
+
+    })
+
+    // courselength
+    const courseLen = 
+
+  });
+
   const tractionTMin = tractionTimes.length ? Math.min(...tractionTimes) : 0;
 
-  const completers = teams.filter((t) => t.tractionTime != null && t.tractionTime > 0);
-  const nonCompleters = teams.filter(
-    (t) => (t.tractionTime == null && t.tractionDistance != null) || t.tractionTime === 0,
-  );
+  //const completers = teams.filter((t) => t.tractionTime != null && t.tractionTime > 0);
+  //const nonCompleters = teams.filter(
+  //  (t) => (t.tractionTime == null && t.tractionDistance != null) || t.tractionTime === 0,);
   const tractionCourseLen = maxDistance((t) => t.tractionDistance, completers);
   const method = completers.length === 0 ? 1 : nonCompleters.length === 0 ? 2 : 3;
 
-  const specCompleters = teams.filter((t) => t.specialtyTime != null && t.specialtyTime > 0);
-  const specNonCompleters = teams.filter(
-    (t) => t.specialtyDistance != null && (t.specialtyTime == null || t.specialtyTime === 0),
-  );
+  //const specCompleters = teams.filter((t) => t.specialtyTime != null && t.specialtyTime > 0);
+  //const specNonCompleters = teams.filter(
+  //  (t) => t.specialtyDistance != null && (t.specialtyTime == null || t.specialtyTime === 0),);
   const specialtyCourseLen = maxDistance((t) => t.specialtyDistance, specCompleters);
   const specTimes = specCompleters.map((t) => t.specialtyTime!);
   const specTMin = specTimes.length ? Math.min(...specTimes) : 0;
@@ -162,7 +253,7 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
   return {
     accel: { tMin: accelTimes.length ? Math.min(...accelTimes) : 0 },
 
-    traction:
+    /* traction:
       method === 1
         ? { method: 1, dMin: 0, dMax: Math.max(0, ...tractionDists) }
         : method === 2
@@ -172,11 +263,11 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
               tMin: tractionTMin,
               courseLen: tractionCourseLen,
               minCompleterScore: minCompleterScoreByTime(tractionTimes, tractionTMin, 70),
-            },
+            }, */
 
     maneuv: { tMin: maneuvTimes.length ? Math.min(...maneuvTimes) : 0 },
 
-    specialty:
+    /* specialty:
       specCompleters.length === 0
         ? {
             scoring: 'distance',
@@ -190,7 +281,8 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
               tMin: specTMin,
               courseLen: specialtyCourseLen,
               minCompleterScore: minCompleterScoreByTime(specTimes, specTMin, 70),
-            },
+            } */
+    specialty,
 
     endurance: {
       lMax: laps.length ? Math.max(...laps) : 0,

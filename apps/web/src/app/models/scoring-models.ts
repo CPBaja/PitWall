@@ -13,11 +13,12 @@ export interface TeamResults {
 
   // Dynamic
   accelerationTime?: number;
-  tractionTime?: number;
-  tractionDistance?: number;
+  /* tractionTime?: number;
+  tractionDistance?: number; */
   maneuverabilityTime?: number;
-  specialtyTime?: number;
-  specialtyDistance?: number;
+  specialtyRunMap?: Map<string, {time?: number, distance?: number}>; 
+ /*  specialtyTime?: number;
+  specialtyDistance?: number; */
 
   // Endurance
   enduranceLaps?: number;
@@ -26,15 +27,16 @@ export interface TeamResults {
 
 export interface FieldStats {
   accel: { tMin: number };
-  traction:
+/*   traction:
     | { method: 1; dMin: number; dMax: number }
     | { method: 2; tMin: number }
-    | { method: 3; tMin: number; courseLen: number; minCompleterScore: number };
+    | { method: 3; tMin: number; courseLen: number; minCompleterScore: number }; */
   maneuv: { tMin: number };
-  specialty:
+  specialty: Map <string, 
     | { scoring: 'time'; tMin: number }
     | { scoring: 'distance'; dMin: number; dMax: number }
-    | { scoring: 'hybrid'; tMin: number; courseLen: number; minCompleterScore: number };
+    | { scoring: 'hybrid'; tMin: number; courseLen: number; minCompleterScore: number }>;
+    
   endurance: { lMax: number; lMin: number };
 }
 
@@ -113,7 +115,7 @@ function scoreAcceleration(t: TeamResults, f: FieldStats): number | null {
   return scoreByTime(70, t.accelerationTime, f.accel.tMin, 1.5);
 }
 
-function scoreTraction(t: TeamResults, f: FieldStats): number | null {
+/* function scoreTraction(t: TeamResults, f: FieldStats): number | null {
   switch (f.traction.method) {
     case 1:
       if (t.tractionDistance == null) return null;
@@ -136,7 +138,7 @@ function scoreTraction(t: TeamResults, f: FieldStats): number | null {
       return null;
     }
   }
-}
+} */
 
 function scoreManeuverability(t: TeamResults, f: FieldStats): number | null {
   if (t.maneuverabilityTime == null || !f.maneuv.tMin) return null;
@@ -200,7 +202,7 @@ export function calcTeamScore(
   const staticTotal =
     design != null || cost != null || bp != null ? (design ?? 0) + (cost ?? 0) + (bp ?? 0) : null;
   const accel = scoreAcceleration(team, fieldStats);
-  const traction = scoreTraction(team, fieldStats);
+  const traction = scoreSpecialty(team, fieldStats);
   const maneuv = scoreManeuverability(team, fieldStats);
   const specialty = scoreSpecialty(team, fieldStats);
   const endurance = scoreEndurance(team, fieldStats, enduranceBonus);
