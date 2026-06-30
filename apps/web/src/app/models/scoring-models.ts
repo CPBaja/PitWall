@@ -146,7 +146,7 @@ function scoreManeuverability(t: TeamResults, f: FieldStats): number | null {
 }
 
 function scoreSpecialty(t: TeamResults, f: FieldStats): number | null {
-  if (f.specialty.scoring === 'time') {
+  /* if (f.specialty.scoring === 'time') {
     if (t.specialtyTime == null || t.specialtyTime === 0) return null;
     return scoreByTime(70, t.specialtyTime, f.specialty.tMin, 2.5);
   } else if (f.specialty.scoring === 'distance') {
@@ -165,7 +165,52 @@ function scoreSpecialty(t: TeamResults, f: FieldStats): number | null {
       );
     }
     return null;
+  } */
+ if (!t.specialtyRunMap || t.specialtyRunMap.size === 0 || f.specialty.size === 0) {
+    return null;
   }
+
+  let total = 0;
+  let hasScore = false;
+
+  t.specialtyRunMap.forEach((run, eventName) => {
+    const eventStats = f.specialty.get(eventName);
+
+    if (!eventStats) {
+      return;
+    }
+
+    let score: number | null = null;
+
+    if (eventStats.scoring === 'time') {
+      if (run.time != null && run.time > 0) {
+        score = scoreByTime(70, run.time, eventStats.tMin, 2.5);
+      }
+    } else if (eventStats.scoring === 'distance') {
+      if (run.distance != null) {
+        score = scoreByDistance(70, run.distance, eventStats.dMin, eventStats.dMax);
+      }
+    } else {
+      const { tMin, courseLen, minCompleterScore } = eventStats;
+
+      if (run.time != null && run.time > 0) {
+        score = scoreHybridCompleterByTime(70, run.time, tMin);
+      } else if (run.distance != null && courseLen > 0) {
+        score = clamp(
+          minCompleterScore * (run.distance / courseLen),
+          0,
+          minCompleterScore,
+        );
+      }
+    }
+
+    if (score != null) {
+      total += score;
+      hasScore = true;
+    }
+  });
+
+  return hasScore ? total : null;
 }
 
 function scoreEndurance(t: TeamResults, f: FieldStats, enduranceBonus: number): number | null {

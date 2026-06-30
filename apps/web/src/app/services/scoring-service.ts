@@ -158,7 +158,7 @@ function resolveFinishOrder(
   return result;
 }
 
-function deriveFieldStats(teams: TeamResults[]): FieldStats {
+export function deriveFieldStats(teams: TeamResults[]): FieldStats {
   const times = (getter: (t: TeamResults) => number | undefined) =>
     teams.map(getter).filter((t): t is number => t != null && t > 0);
   const maxDistance = (getter: (t: TeamResults) => number | undefined, subset: TeamResults[]) =>
@@ -168,120 +168,57 @@ function deriveFieldStats(teams: TeamResults[]): FieldStats {
   const maneuvTimes = times((t) => t.maneuverabilityTime);
   const laps = times((t) => t.enduranceLaps);
 
-  /* const tractionTimes = times((t) => t.tractionTime);
-  const tractionDists = times((t) => t.tractionDistance); */
-  
-  const specialtyRunMap = new Map<string, { times: number[]; distances: number[] }>();
-  teams.forEach((team) =>
-    team.specialtyRunMap?.forEach((run, eventName) => {
-      const current = specialtyRunMap.get(eventName);
-      if (current === undefined) {
-        specialtyRunMap.set(eventName, {
-          times: run.time ? [run.time] : [],
-          distances: run.distance ? [run.distance] : [],
-        });
-      } else {
-        specialtyRunMap.set(eventName, {
-          times: run.time ? [...current.times, run.time] : current.times,
-          distances: run.distance ? [...current.distances, run.distance] : current.distances,
-        });
-      }
-    }),
-  );
+  const specialty = new Map <
+    string, 
+    | { scoring: 'time'; tMin: number }
+    | { scoring: 'distance'; dMin: number; dMax: number }
+    | { scoring: 'hybrid'; tMin: number; courseLen: number; minCompleterScore: number }>();
 
-  const specialtyTimes = specialtyRunMap;
+  const eventNames = new Set<string>();
 
-  specialtyRunMap.forEach((_, eventName) => {
-    const completers = teams.filter((team) => {
-      const specialtyRunData = team.specialtyRunMap?.get(eventName);  
-      if (!specialtyRunData) {
-        return false;
-      }
-      if (specialtyRunData.time === undefined) {
-        return false;
-      }
-      specialtyRunData.time !== null && specialtyRunData.time > 0;  
-    });
+  for (const team of teams) {
+    team.specialtyRunMap?.forEach((_, eventName) => eventNames.add(eventName));
+  }
 
-    const nonCompleters = teams.filter((team) => {
-      const specialtyRunData = team.specialtyRunMap?.get(eventName);
-      if (!specialtyRunData) {
-        return false;
-      }
-      if (specialtyRunData.time === undefined) {
-        return false;
-      }
-      (specialtyRunData.time === null && specialtyRunData.distance != null) || specialtyRunData.time === 0;
-    });
+  for (const eventName of eventNames) {
+    const runs = teams
+      .map((team) => team.specialtyRunMap?.get(eventName))
+      .filter((run): run is { time?: number; distance?: number } => run != null);
 
-    // mintime
-    const tMin = teams.filter((team) => {
-      const specialtyRunData = team.specialtyRunMap?.get(eventName);
+  const completers = runs.filter((run) => run.time != null && run.time > 0);
+  const nonCompleters = runs.filter(
+      (run) => run.distance != null && (run.time == null || run.time === 0),
+    );
 
-      if (!specialtyRunData) {
-        return false;
-      }
+  const completerTimes = completers.map((run) => run.time!);
+  const tMin = completerTimes.length ? Math.min(...completerTimes) : 0;
 
-      if (specialtyRunData.time === undefined) {
-        return false;
-      }
-      
-      specialtyRunData.time.length ? Math.min(...specialtyRunData.time) : 0;
-
-    })
-
-    // courselength
-    const courseLen = 
-
-  });
-
-  const tractionTMin = tractionTimes.length ? Math.min(...tractionTimes) : 0;
-
-  //const completers = teams.filter((t) => t.tractionTime != null && t.tractionTime > 0);
-  //const nonCompleters = teams.filter(
-  //  (t) => (t.tractionTime == null && t.tractionDistance != null) || t.tractionTime === 0,);
-  const tractionCourseLen = maxDistance((t) => t.tractionDistance, completers);
-  const method = completers.length === 0 ? 1 : nonCompleters.length === 0 ? 2 : 3;
-
-  //const specCompleters = teams.filter((t) => t.specialtyTime != null && t.specialtyTime > 0);
-  //const specNonCompleters = teams.filter(
-  //  (t) => t.specialtyDistance != null && (t.specialtyTime == null || t.specialtyTime === 0),);
-  const specialtyCourseLen = maxDistance((t) => t.specialtyDistance, specCompleters);
-  const specTimes = specCompleters.map((t) => t.specialtyTime!);
-  const specTMin = specTimes.length ? Math.min(...specTimes) : 0;
+  if (completers.length === 0) {
+    specialty.set(eventName, {
+      scoring: 'distance',
+        dMin: 0,
+        dMax: Math.max(0, ...runs.map((run) => run.distance ?? 0)),
+      });
+    } else if (nonCompleters.length === 0) {
+      specialty.set(eventName, {
+        scoring: 'time',
+        tMin,
+      });
+    } else {
+      specialty.set(eventName, {
+        scoring: 'hybrid',
+        tMin,
+        courseLen: Math.max(0, ...completers.map((run) => run.distance ?? 0)),
+        minCompleterScore: minCompleterScoreByTime(completerTimes, tMin, 70),
+      });
+    }
+  }
 
   return {
     accel: { tMin: accelTimes.length ? Math.min(...accelTimes) : 0 },
 
-    /* traction:
-      method === 1
-        ? { method: 1, dMin: 0, dMax: Math.max(0, ...tractionDists) }
-        : method === 2
-          ? { method: 2, tMin: tractionTMin }
-          : {
-              method: 3,
-              tMin: tractionTMin,
-              courseLen: tractionCourseLen,
-              minCompleterScore: minCompleterScoreByTime(tractionTimes, tractionTMin, 70),
-            }, */
-
     maneuv: { tMin: maneuvTimes.length ? Math.min(...maneuvTimes) : 0 },
 
-    /* specialty:
-      specCompleters.length === 0
-        ? {
-            scoring: 'distance',
-            dMin: 0,
-            dMax: Math.max(0, ...specNonCompleters.map((t) => t.specialtyDistance ?? 0)),
-          }
-        : specNonCompleters.length === 0
-          ? { scoring: 'time', tMin: specTMin }
-          : {
-              scoring: 'hybrid',
-              tMin: specTMin,
-              courseLen: specialtyCourseLen,
-              minCompleterScore: minCompleterScoreByTime(specTimes, specTMin, 70),
-            } */
     specialty,
 
     endurance: {
